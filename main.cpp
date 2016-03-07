@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
 	QTranslator *translator = new QTranslator(&a);
 
-	//¼ÓÔØÓïÑÔÎÄ¼þ
+	//åŠ è½½è¯­è¨€æ–‡ä»¶
 	if (translator->load("httppost_zh.qm")){
 		a.installTranslator(translator);
 	}
