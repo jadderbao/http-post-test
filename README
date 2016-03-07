@@ -1,23 +1,38 @@
-Èí¼şÔËĞĞÔÚWindows Æ½Ì¨£¬²âÊÔÁËwindows 10 x64 Î»Æ½Ì¨¡£
+Software running on the Windows platform, testing the windows 10 x64 platform.
+1, the software decompression to the folder
+2, open and run vcredist_x86.exe, waiting for the completion of the installation.
+3, open the httppost.exe can run the software.
+Http Jadder testing tool
+Jadderbao@163.com E-Mail:
+Software function:
+Ver 0.3
+1, add the detection of POST/GET return content format, such as the JSON format automatically formatted display
+2, add open, save the file, automatically the last operation of the path as the default path function.
+Ver 0.2
+1, to achieve POST, GET function: POST to achieve XML, JSON, url-encode format data submitted
+2, you can save the input content or read, in order to use
+3, you can customize the header
 
-1¡¢½«±¾Èí¼ş½âÑ¹µ½ÎÄ¼ş¼Ğ
-2¡¢´ò¿ª²¢ÔËĞĞvcredist_x86.exe, µÈ´ı°²×°Íê³É¡£
-3¡¢´ò¿ªhttppost.exe ¼´¿ÉÔËĞĞ±¾Èí¼ş¡£
+è½¯ä»¶è¿è¡Œåœ¨Windows å¹³å°ï¼Œæµ‹è¯•äº†windows 10 x64 ä½å¹³å°ã€‚
 
-Jadder Http ²âÊÔ¹¤¾ß 
+1ã€å°†æœ¬è½¯ä»¶è§£å‹åˆ°æ–‡ä»¶å¤¹
+2ã€æ‰“å¼€å¹¶è¿è¡Œvcredist_x86.exe, ç­‰å¾…å®‰è£…å®Œæˆã€‚
+3ã€æ‰“å¼€httppost.exe å³å¯è¿è¡Œæœ¬è½¯ä»¶ã€‚
+
+Jadder Http æµ‹è¯•å·¥å…· 
 
 E-Mail: jadderbao@163.com
 
-Èí¼ş¹¦ÄÜ£º
+è½¯ä»¶åŠŸèƒ½ï¼š
 
 ver 0.3
-1¡¢Ìí¼Ó¼ì²âPOST/GET·µ»ØÄÚÈİ¸ñÊ½£¬ÈçÎªjson¸ñÊ½¾Í×Ô¶¯¸ñÊ½»¯ÏÔÊ¾
-2¡¢Ìí¼Ó´ò¿ª£¬±£´æÎÄ¼şÊ±£¬×Ô¶¯½«×îºóÒ»´Î²Ù×÷µÄÂ·¾¶ÎªÄ¬ÈÏÂ·¾¶¹¦ÄÜ¡£
+1ã€æ·»åŠ æ£€æµ‹POST/GETè¿”å›å†…å®¹æ ¼å¼ï¼Œå¦‚ä¸ºjsonæ ¼å¼å°±è‡ªåŠ¨æ ¼å¼åŒ–æ˜¾ç¤º
+2ã€æ·»åŠ æ‰“å¼€ï¼Œä¿å­˜æ–‡ä»¶æ—¶ï¼Œè‡ªåŠ¨å°†æœ€åä¸€æ¬¡æ“ä½œçš„è·¯å¾„ä¸ºé»˜è®¤è·¯å¾„åŠŸèƒ½ã€‚
 
 ver 0.2
 
-1¡¢ÊµÏÖPOST¡¢GET¹¦ÄÜ£ºPOST ÊµÏÖxml,json, url-encode ¸ñÊ½µÄÊı¾İÌá½»
-2¡¢¿ÉÒÔ½«ÊäÈëÄÚÈİ±£´æ»ò¶ÁÈ¡£¬ÒÔ±ãÊ¹ÓÃ
-3¡¢¿ÉÒÔ×Ô¶¨ÒåÍ·
+1ã€å®ç°POSTã€GETåŠŸèƒ½ï¼šPOST å®ç°xml,json, url-encode æ ¼å¼çš„æ•°æ®æäº¤
+2ã€å¯ä»¥å°†è¾“å…¥å†…å®¹ä¿å­˜æˆ–è¯»å–ï¼Œä»¥ä¾¿ä½¿ç”¨
+3ã€å¯ä»¥è‡ªå®šä¹‰å¤´
 
 
