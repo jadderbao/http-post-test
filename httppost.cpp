@@ -1,4 +1,4 @@
-﻿#include "httppost.h"
+#include "httppost.h"
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -130,7 +130,7 @@ void httppost::post()
 		return;
 	}
 
-	QHttpMultiPart *multi_part = nullptr;
+    QHttpMultiPart *multi_part = 0;
 	QString body;
 	switch (ui.tabWidgetPostBody->currentIndex()){
 	case 0:
@@ -154,7 +154,7 @@ void httppost::post()
 	{
 		QNetworkRequest request(url);
 		QEventLoop loop;
-		QNetworkReply *reply = nullptr;
+        QNetworkReply *reply = 0;
 
 		QSslConfiguration config;
 		config.setPeerVerifyMode(QSslSocket::VerifyNone);
@@ -163,22 +163,22 @@ void httppost::post()
 
 		switch (ui.tabWidgetPostBody->currentIndex()){
 		case 0:
-			request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/x-www-form-urlencoded");
+            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 			update_request_custom_header(&request);
 			reply = am->post(request, body.toLocal8Bit());
 			break;
 		case 1:
-			request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "multipart/form-data");
+            request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
 			update_request_custom_header(&request);
 			reply = am->post(request, multi_part);
 			break;
 		case 2:
-			request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json");
+            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 			update_request_custom_header(&request);
 			reply = am->post(request, body.toLocal8Bit());
 			break;
 		case 3:
-			request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "text/xml");
+            request.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
 			update_request_custom_header(&request);
 			reply = am->post(request, body.toLocal8Bit());
 			break;
