@@ -99,7 +99,7 @@ void httppost::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 
 void httppost::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 {
-	if (bytesSent){
+	if (bytesSent == 0){
 		progress_bar->setVisible(true);
 		progress_bar->setMaximum(bytesTotal);
 		progress_bar->setTextVisible(true);
