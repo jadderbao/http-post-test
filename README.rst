@@ -11,7 +11,7 @@ Software running on the Windows platform, testing the windows 10 x64 platform.
   *  open the httppost.exe can run the software.
 Http Jadder testing tool
 
-Jadderbao@163.com E-Mail:
+E-Mail: Jadderbao@163.com
 
 Software function:
 
