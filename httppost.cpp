@@ -1,4 +1,4 @@
-#include "httppost.h"
+﻿#include "httppost.h"
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -401,7 +401,7 @@ void httppost::form_save()
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::WriteOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
@@ -428,7 +428,7 @@ void httppost::form_load()
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::ReadOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
@@ -505,7 +505,7 @@ void httppost::header_load()
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::ReadOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
@@ -536,7 +536,7 @@ void httppost::header_save()
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::WriteOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
@@ -685,7 +685,7 @@ QByteArray httppost::load_text_file(const QString& filter)
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::ReadOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return QByteArray();
 	}
@@ -701,7 +701,7 @@ void httppost::save_text_file(const QString& filter, const QByteArray& data)
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::WriteOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
@@ -712,7 +712,7 @@ void httppost::save_text_file(const QString& filter, const QByteArray& data)
 void httppost::save_url_encode_post_data(const QString& file_name)
 {
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::WriteOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
@@ -735,7 +735,7 @@ void httppost::load_url_encode_post_data(const QString& file_name)
 	}
 
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadWrite)){
+	if (!file.open(QIODevice::ReadOnly)){
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
