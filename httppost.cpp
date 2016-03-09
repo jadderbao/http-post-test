@@ -268,10 +268,7 @@ void httppost::show_reply(QNetworkReply * reply)
 	if (reply->error() == QNetworkReply::NoError)
 	{
 		//没有错误，输出返回值
-		QByteArray bytes = reply->readAll();  // bytes 
-		QTextCodec * codec = QTextCodec::codecForHtml(bytes);
-		QString response_body = codec->toUnicode(bytes.data());
-
+		QString response_body = reply->readAll();  // bytes 
 		QJsonParseError error;
 		QJsonDocument doc = QJsonDocument::fromJson(response_body.toUtf8(), &error);
 		if (error.error != QJsonParseError::NoError){
