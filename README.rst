@@ -4,11 +4,12 @@ Http Post Test
 Introduction
 ------------
 
-Software running on the Windows platform, testing the windows 10 x64 platform.
+Software running on the Windows platform, tested the software on the windows 10 x64 platform.
 
-  *  the software decompression to the folder
+  *  decompression the software to the folder
   *  open and run vcredist_x86.exe, waiting for the completion of the installation.
-  *  open the httppost.exe can run the software.
+  *  running the httppost.exe in the software folder.
+  
 Http Jadder testing tool
 
 E-Mail: Jadderbao@163.com
@@ -17,14 +18,14 @@ Software function:
 
 Ver 0.3
 
-  *  add the detection of POST/GET return content format, such as the JSON format automatically formatted display
-  *  add open, save the file, automatically the last operation of the path as the default path function.
+  *  add the detection format of POST/GET return content, such as the JSON format automatically formatted and display
+  *  add "file name of the Open, Save file at last operation as the default Path" function.
   
 Ver 0.2
 
-  *  to achieve POST, GET function: POST to achieve XML, JSON, url-encode format data submitted
-  *  you can save the input content or read, in order to use
-  *  you can customize the header
+  *  add POST, GET function: can POST data in XML, JSON, url-encode format
+  *  can save or load input content, in order to use
+  *  you can customize the header.
 
 软件运行在Windows 平台，测试了windows 10 x64 位平台。
 
