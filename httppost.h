@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_httppost.h"
 #include "config.h"
+#include <QJsonObject>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -68,9 +69,10 @@ public slots:
 public:
 	QString get_open_file_name(const QString& filter);
 	QString get_save_file_name(const QString& filter);
-
 	QByteArray load_text_file(const QString& filter);
 	void save_text_file(const QString& filter, const QByteArray& data);
+	QJsonObject load_json_file(const QString& file_name);
+	void save_json_file(const QString& file_name, const QJsonObject& v);
 
 private:
 	Ui::httppostClass ui;

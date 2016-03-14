@@ -397,23 +397,12 @@ void httppost::form_save()
 		return;
 	}
 
-	QFile file(file_name);
-	if (!file.open(QIODevice::WriteOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
-		return;
-	}
-
 	//table 转json 格式
 	QJsonObject v = key_value_table_to_json(ui.tableWidgetFormData);
 	v["url"] = ui.lineEditUrl->text();
 	v["headers"] = key_value_table_to_json(ui.tableWidgetHeaders);
 
-	QJsonDocument doc(v);
-	doc.toJson();
-
-	file.write(doc.toJson());
-	return;
-
+	save_json_file(file_name, v);
 }
 
 
@@ -424,25 +413,7 @@ void httppost::form_load()
 		return;
 	}
 
-	QFile file(file_name);
-	if (!file.open(QIODevice::ReadOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
-		return;
-	}
-
-	QJsonParseError error;
-	QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
-	if (doc.isNull()){
-		QMessageBox::warning(this, "Json 错误", error.errorString(), QMessageBox::Ok);
-		return;
-	}
-
-	if (!doc.isObject()){
-		QMessageBox::warning(this, "Json 错误", "json数据不是本软件需要的。", QMessageBox::Ok);
-		return;
-	}
-
-	QJsonObject v = doc.object();
+	QJsonObject v = load_json_file(file_name);
 	ui.lineEditUrl->setText(v["url"].toString());
 	key_value_json_to_table(v, ui.tableWidgetFormData);
 
@@ -501,27 +472,8 @@ void httppost::header_load()
 		return;
 	}
 
-	QFile file(file_name);
-	if (!file.open(QIODevice::ReadOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
-		return;
-	}
-
-	QJsonParseError error;
-	QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
-	if (doc.isNull()){
-		QMessageBox::warning(this, "Json 错误", error.errorString(), QMessageBox::Ok);
-		return;
-	}
-
-	if (!doc.isObject()){
-		QMessageBox::warning(this, "Json 错误", "json数据不是本软件需要的。", QMessageBox::Ok);
-		return;
-	}
-
-	QJsonObject v = doc.object();
+	QJsonObject v = load_json_file(file_name);
 	key_value_json_to_table(v, ui.tableWidgetHeaders);
-	return;
 }
 
 
@@ -532,17 +484,11 @@ void httppost::header_save()
 		return;
 	}
 
-	QFile file(file_name);
-	if (!file.open(QIODevice::WriteOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
-		return;
-	}
 
 	//table 值转json object
 	QJsonObject v = key_value_table_to_json(ui.tableWidgetHeaders);
 
-	QJsonDocument doc(v);
-	file.write(doc.toJson());
+	save_json_file(file_name, v);
 }
 
 
@@ -708,21 +654,13 @@ void httppost::save_text_file(const QString& filter, const QByteArray& data)
 
 void httppost::save_url_encode_post_data(const QString& file_name)
 {
-	QFile file(file_name);
-	if (!file.open(QIODevice::WriteOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
-		return;
-	}
 
 	//table 转json 格式
 	QJsonObject v = key_value_table_to_json(ui.tableWidgetKeyValue);
 	v["url"] = ui.lineEditUrl->text();
 	v["headers"] = key_value_table_to_json(ui.tableWidgetHeaders);
 
-	QJsonDocument doc(v);
-	doc.toJson();
-
-	file.write(doc.toJson());
+	save_json_file(file_name, v);
 }
 
 void httppost::load_url_encode_post_data(const QString& file_name)
@@ -731,28 +669,47 @@ void httppost::load_url_encode_post_data(const QString& file_name)
 		return;
 	}
 
-	QFile file(file_name);
-	if (!file.open(QIODevice::ReadOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
-		return;
-	}
+	QJsonObject v = load_json_file(file_name);
 
-	QJsonParseError error;
-	QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
-	if (doc.isNull()){
-		QMessageBox::warning(this, "Json 错误", error.errorString(), QMessageBox::Ok);
-		return;
-	}
-
-	if (!doc.isObject()){
-		QMessageBox::warning(this, "Json 错误", "json数据不是本软件需要的。", QMessageBox::Ok);
-		return;
-	}
-
-	QJsonObject v = doc.object();
 	ui.lineEditUrl->setText(v["url"].toString());
 	key_value_json_to_table(v, ui.tableWidgetKeyValue);
 
 	QJsonObject h = v["headers"].toObject();
 	key_value_json_to_table(h, ui.tableWidgetHeaders);
 }
+
+QJsonObject httppost::load_json_file(const QString& file_name)
+{
+	QFile file(file_name);
+	if (!file.open(QIODevice::ReadOnly)){
+		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
+		return QJsonObject();
+	}
+
+	QJsonParseError error;
+	QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+	if (doc.isNull()){
+		QMessageBox::warning(this, "Json 错误", error.errorString(), QMessageBox::Ok);
+		return QJsonObject();
+	}
+
+	if (!doc.isObject()){
+		QMessageBox::warning(this, "Json 错误", "json数据不是本软件需要的。", QMessageBox::Ok);
+		return QJsonObject();
+	}
+
+	return doc.object();
+}
+
+void httppost::save_json_file(const QString& file_name, const QJsonObject& v)
+{
+	QFile file(file_name);
+	if (!file.open(QIODevice::WriteOnly)){
+		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
+		return;
+	}
+
+	QJsonDocument doc(v);
+	file.write(doc.toJson());
+}
+
