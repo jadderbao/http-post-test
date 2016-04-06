@@ -39,6 +39,15 @@ E-Mail: jadderbao@163.com
 
 软件功能：
 
+ver 0.4
+
+  *  添加javascript支持，可以在value中填写javascript脚本，用以生成提交的数据
+  *  添加ucenter_authcode、md5支持
+   例：
+     1) 在urlencode table 中添加一条 value_type 为 javascript 的数据，
+     2) 将value 值设置为： code_tool.md5("aadsfwer");
+     3) 用户在向服务器提交数据时自动将该数据替换成计算后的md5值
+
 ver 0.3
 
   *  添加检测POST/GET返回内容格式，如为json格式就自动格式化显示
