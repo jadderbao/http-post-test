@@ -17,12 +17,23 @@
 #include <QSsl>  
 #include <QSslConfiguration>  
 #include <QSslSocket> 
+#include <QMap>
+#include <QScriptEngine>
+
+#include "table_widget_delegate.h"
+#include "http_data.h"
+#include "http_client.h"
+#include "http_script_engine.h"
+#include "post_data_process.h"
 
 httppost::httppost(QWidget *parent)
 	: QMainWindow(parent)
 	, last_file_name("data")
 {
 	ui.setupUi(this);
+	
+	_engine = new http_script_engine(this);
+	initialize_script_engine(_engine);
 
 	am = new QNetworkAccessManager(this);
 	cookie_jar = new QNetworkCookieJar(this);
@@ -31,10 +42,10 @@ httppost::httppost(QWidget *parent)
 	connect(ui.pushButtonPost, &QPushButton::clicked, this, &httppost::post);
 	connect(ui.pushButtonGet, &QPushButton::clicked, this, &httppost::get);
 
-	connect(ui.pushButtonInsert, &QPushButton::clicked, this, &httppost::insert);
-	connect(ui.pushButtonRemove, &QPushButton::clicked, this, &httppost::remove);
-	connect(ui.pushButtonSave, &QPushButton::clicked, this, &httppost::save);
-	connect(ui.pushButtonLoad, &QPushButton::clicked, this, &httppost::load);
+	connect(ui.pushButtonInsert, &QPushButton::clicked, this, &httppost::url_encode_body_insert);
+	connect(ui.pushButtonRemove, &QPushButton::clicked, this, &httppost::url_encode_body_remove);
+	connect(ui.pushButtonSave, &QPushButton::clicked, this, &httppost::url_encode_body_save);
+	connect(ui.pushButtonLoad, &QPushButton::clicked, this, &httppost::url_encode_body_load);
 
 	connect(ui.pushButtonFormInsertText, &QPushButton::clicked, this, &httppost::form_add_text);
 	connect(ui.pushButtonFormInsertImage, &QPushButton::clicked, this, &httppost::form_add_image);
@@ -56,18 +67,10 @@ httppost::httppost(QWidget *parent)
 	connect(ui.pushButtonHeaderSave, &QPushButton::clicked, this, &httppost::header_save);
 	connect(ui.pushButtonHeaderLoad, &QPushButton::clicked, this, &httppost::header_load);
 
-	//设置Value列宽度
-	ui.tableWidgetKeyValue->setColumnWidth(1, 380);
+	set_table_widgets();
 
-	//设置Value列宽度
-	ui.tableWidgetHeaders->setColumnWidth(1, 380);
-
-	//设置Value列宽度
-	ui.tableWidgetResponseHeaders->setColumnWidth(1, 380);
-
-	//设置Value列宽度
-	ui.tableWidgetFormData->setColumnWidth(1, 380);
-
+	//
+    ui.checkBoxAutoUCenterAuthentication->hide();
 
 	load_url_encode_post_data("default.hpd");
 
@@ -76,11 +79,56 @@ httppost::httppost(QWidget *parent)
 	ui.statusBar->addPermanentWidget(progress_bar);
 
 	ui.tabWidgetPostBody->setCurrentIndex(0);
-	ui.statusBar->showMessage("Jadder Http 测试工具 V 0.3 build 2016.3.5 e-mail: JadderBao@163.com");
+	ui.statusBar->showMessage("Jadder Http 测试工具 V 0.4 build 2016.3.5 e-mail: JadderBao@163.com");
 }
 
 httppost::~httppost()
 {
+
+}
+
+
+void httppost::set_table_widgets()
+{
+	ui.tableWidgetUrlEncode->setEditTriggers(QAbstractItemView::AllEditTriggers);
+	ui.tableWidgetHeaders->setEditTriggers(QAbstractItemView::AllEditTriggers);
+	ui.tableWidgetFormData->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+	//设置Value列宽度
+	ui.tableWidgetResponseHeaders->setColumnWidth(1, 600);
+
+	table_widget_delegate::column_data_map_t map;
+
+	table_widget_delegate::column_data_ptr post_type_column_data(table_widget_delegate::column_data_ptr::create());
+	post_type_column_data->type = table_widget_delegate::WIDGET_COMBOBOX;
+	post_type_column_data->data = QStringList() << POST_TYPE_NONE_STR << POST_TYPE_HEADER_STR;
+
+	map.insert(url_encode_table_widget::URL_ENCODE_COLUMN_POST_TYPE, post_type_column_data);
+
+	table_widget_delegate::column_data_ptr auth_column_data(table_widget_delegate::column_data_ptr::create());
+	auth_column_data->type = table_widget_delegate::WIDGET_CHECKBOX;
+
+	map.insert(url_encode_table_widget::URL_ENCODE_COLUMN_AUTH, auth_column_data);
+
+	table_widget_delegate::column_data_ptr value_type_column_data(table_widget_delegate::column_data_ptr::create());
+	value_type_column_data->type = table_widget_delegate::WIDGET_COMBOBOX;
+	value_type_column_data->data = QStringList() << POST_VALUE_TYPE_VALUE_STR << POST_VALUE_TYPE_UCENTER_AUTHCODE_STR
+		<< POST_VALUE_TYPE_JAVASCRIPT_STR;
+
+	map.insert(url_encode_table_widget::URL_ENCODE_COLUMN_VALUE_TYPE, value_type_column_data);
+
+	table_widget_delegate * headers_delgate = new table_widget_delegate(map, ui.tableWidgetHeaders);
+	ui.tableWidgetHeaders->setItemDelegate(headers_delgate);
+
+	table_widget_delegate::column_data_ptr header_post_type_column_data(table_widget_delegate::column_data_ptr::create());
+	header_post_type_column_data->type = table_widget_delegate::WIDGET_COMBOBOX;
+	header_post_type_column_data->data = QStringList() << POST_TYPE_NONE_STR << POST_TYPE_URL_QUERY_STR
+		<< POST_TYPE_BODY_STR << POST_TYPE_HEADER_STR;
+
+	map[url_encode_table_widget::URL_ENCODE_COLUMN_POST_TYPE] = header_post_type_column_data;
+
+	table_widget_delegate * url_encode_delgate = new table_widget_delegate(map, ui.tableWidgetUrlEncode);
+	ui.tableWidgetUrlEncode->setItemDelegate(url_encode_delgate);
 
 }
 
@@ -130,85 +178,22 @@ void httppost::post()
 		return;
 	}
 
-    QHttpMultiPart *multi_part = 0;
-	QString body;
 	switch (ui.tabWidgetPostBody->currentIndex()){
-	case 0:
-		body = get_url_encode_body();
+	case 0: // url_encoded
+		post_url_encoded(url);
 		break;
 	case 1:
-		multi_part = new QHttpMultiPart();
-		form_data_table_to_multi_part(multi_part, ui.tableWidgetFormData);
+		post_multi_part(url);
 		break;
-	case 2:
-		body = ui.plainTextEditJson->toPlainText();
+	case 2: //json
+		post_byte_data(url, ui.plainTextEditJson->toPlainText().toUtf8());
 		break;
-	case 3:
-		body = ui.plainTextEditText->toPlainText();
+	case 3: //text/xml
+		post_byte_data(url, ui.plainTextEditText->toPlainText().toUtf8());
 		break;
 	default:
 		break;
 	}
-
-	while (true)
-	{
-		QNetworkRequest request(url);
-		QEventLoop loop;
-        QNetworkReply *reply = 0;
-
-		QSslConfiguration config;
-		config.setPeerVerifyMode(QSslSocket::VerifyNone);
-		config.setProtocol(QSsl::TlsV1_0OrLater);
-		request.setSslConfiguration(config);
-
-		switch (ui.tabWidgetPostBody->currentIndex()){
-		case 0:
-            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-			update_request_custom_header(&request);
-			reply = am->post(request, body.toLocal8Bit());
-			break;
-		case 1:
-            request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/form-data");
-			update_request_custom_header(&request);
-			reply = am->post(request, multi_part);
-			break;
-		case 2:
-            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-			update_request_custom_header(&request);
-			reply = am->post(request, body.toLocal8Bit());
-			break;
-		case 3:
-            request.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
-			update_request_custom_header(&request);
-			reply = am->post(request, body.toLocal8Bit());
-			break;
-		default:
-			break;
-		}
-
-		connect(reply, &QNetworkReply::downloadProgress, this, &httppost::downloadProgress);
-		connect(reply, &QNetworkReply::uploadProgress, this, &httppost::uploadProgress);
-		connect(reply, &QNetworkReply::finished, this, &httppost::finished);
-		connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-		loop.exec();
-
-		int http_status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-		if (http_status == 302){
-			url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
-
-			reply->close();
-			reply->deleteLater();
-			continue;
-		}
-
-		show_reply(reply);
-		break;
-	}
-
-	if (multi_part){
-		delete multi_part;
-	}
-
 }
 
 
@@ -222,45 +207,32 @@ void httppost::get()
 		return;
 	}
 
+	//只有当前项为url_encoded 页时才处理get
 	if (ui.tabWidgetPostBody->currentIndex() != 0){
 		ui.tabWidgetPostBody->setCurrentIndex(0);
 	}
 
-	QString body = get_url_encode_body();
+	http_data_list items;
+	if (!get_ui_data_items(items)){
+		return;
+	}
+
+	//原来 url, body 上的参数都一起发送
+	QString body = items.to_url_encode_string(http_data::POST_TYPE_BODY | http_data::POST_TYPE_URL_QUERY);
 	url.setQuery(url.hasQuery() ? url.query() + "&" + body : body);
 
-	while (true)
-	{
-		QNetworkRequest request(url);
+	QSharedPointer<http_client> client(new http_client(am));
 
-		QSslConfiguration config;
-		config.setPeerVerifyMode(QSslSocket::VerifyNone);
-		config.setProtocol(QSsl::TlsV1_0OrLater);
-		request.setSslConfiguration(config);
+	//
+	QSharedPointer<http_request> request(new http_request(url));
+	update_request_custom_header(items, request->request());
 
-		update_request_custom_header(&request);
+	connect(client.data(), &http_client::downloadProgress, this, &httppost::downloadProgress);
+	connect(client.data(), &http_client::uploadProgress, this, &httppost::uploadProgress);
+	connect(client.data(), &http_client::finished, this, &httppost::finished);
 
-		QEventLoop loop;
-		QNetworkReply *reply = am->get(request);
-
-		connect(reply, &QNetworkReply::downloadProgress, this, &httppost::downloadProgress);
-		connect(reply, &QNetworkReply::uploadProgress, this, &httppost::uploadProgress);
-		connect(reply, &QNetworkReply::finished, this, &httppost::finished);
-		connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-		loop.exec();
-
-		int http_status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-		if (http_status == 302){
-			url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
-
-			reply->close();
-			reply->deleteLater();
-			continue;
-		}
-
-		show_reply(reply);
-		break;
-	}
+	QNetworkReply *reply = client->get(request.data());
+	show_reply(reply);
 }
 
 void httppost::show_reply(QNetworkReply * reply)
@@ -298,44 +270,117 @@ void httppost::show_reply(QNetworkReply * reply)
 	reply->deleteLater();
 }
 
-QString httppost::get_url_encode_body()
+void httppost::add_post_data_item(http_data_list& items, http_data_ptr item)
 {
+	items.append(item);
+}
+
+
+bool httppost::get_ui_data_items(http_data_list& items)
+{
+	//取自定义头数据
+	items.append(ui.tableWidgetHeaders->data());
+	items.append(ui.tableWidgetUrlEncode->data());
+
+	QString error;
+	if (!process_and_update_item_value(items, error)){
+		QMessageBox::warning(this, "无效的数据项", "错误:" + error, QMessageBox::Ok);
+		return false;
+	}
+
+	return true;
+}
+
+bool httppost::process_and_update_item_value(http_data_list& items, QString& error)
+{
+	post_data_process process(_engine, 0);
+	bool ok = process.process_post_data(&items);
+	if (!ok){
+		error = process.error_string();
+	}
+	return ok;
+}
+
+void httppost::http_post(QUrl &url, http_request_body * http_body, const http_data_list &items)
+{
+	//添加Url query部分
+	QString url_data = items.to_url_encode_string(http_data::POST_TYPE_URL_QUERY);
+	url.setQuery(url.hasQuery() ? url.query() + "&" + url_data : url_data);
+
+	QSharedPointer<http_client> client(new http_client(am));
+	QSharedPointer<http_request> request(new http_request(url));
+
+	request->set_body(http_body);
+	update_request_custom_header(items, request->request());
+
+	connect(client.data(), &http_client::downloadProgress, this, &httppost::downloadProgress);
+	connect(client.data(), &http_client::uploadProgress, this, &httppost::uploadProgress);
+	connect(client.data(), &http_client::finished, this, &httppost::finished);
+
+	QNetworkReply *reply = client->post(request.data());
+	show_reply(reply);
+}
+
+void httppost::http_post(QUrl &url, QHttpMultiPart *multi_part, const http_data_list &items)
+{
+	http_request_body *http_body = new http_request_body(multi_part);
+	http_post(url, http_body, items);
+}
+
+void httppost::http_post(QUrl &url, const QByteArray &body, const http_data_list &items)
+{
+	http_request_body *http_body = new http_request_body(body);
+	http_post(url, http_body, items);
+}
+
+void httppost::post_url_encoded(QUrl& url)
+{
+	http_data_list items;
+
+	if (!get_ui_data_items(items)){
+		return;
+	}
+
 	QString body;
-	int count = ui.tableWidgetKeyValue->rowCount();
-	for (int i = 0; i < count; i++){
-		QString key = ui.tableWidgetKeyValue->item(i, 0)->data(0).toString();
-		body.append(url_encode(key));
-		body.append("=");
+	body = items.to_url_encode_string(http_data::POST_TYPE_BODY);
+	http_post(url, body.toUtf8(), items);
+}
 
-		QString value = ui.tableWidgetKeyValue->item(i, 1)->data(0).toString();
-		body.append(url_encode(value));
-		body.append("&");
+void httppost::post_byte_data(QUrl& url, const QByteArray& data)
+{
+	http_data_list items;
+
+	if (!get_ui_data_items(items)){
+		return;
 	}
 
-	if (!body.isEmpty()){
-		body.remove(body.size() - 1, 1);
+	http_post(url, data, items);
+}
+
+void httppost::post_multi_part(QUrl& url)
+{
+	http_data_list items;
+	if (!get_ui_data_items(items)){
+		return;
 	}
 
-	return body;
+	QHttpMultiPart *multi_part = new QHttpMultiPart();
+	form_data_table_to_multi_part(multi_part, ui.tableWidgetFormData);
+	http_post(url, multi_part, items);
 }
 
-QByteArray httppost::url_encode(QString &data)
+void httppost::url_encode_body_insert()
 {
-	QByteArray ba = data.toUtf8();
-	return ba.toPercentEncoding();
+	int row = ui.tableWidgetUrlEncode->rowCount();
+	ui.tableWidgetUrlEncode->setRowCount( row + 1);
 }
 
-void httppost::insert()
+void httppost::url_encode_body_remove()
 {
-	ui.tableWidgetKeyValue->setRowCount(ui.tableWidgetKeyValue->rowCount() + 1);
+	ui.tableWidgetUrlEncode->removeRow(ui.tableWidgetUrlEncode->currentIndex().row());
 }
 
-void httppost::remove()
-{
-	ui.tableWidgetKeyValue->removeRow(ui.tableWidgetKeyValue->currentIndex().row());
-}
-
-void httppost::save()
+void httppost::url_encode_body_save()
 {
 	QString file_name = get_save_file_name("Http Post Data(*.hpd)");
 	if (file_name.isEmpty()){
@@ -347,7 +392,7 @@ void httppost::save()
 }
 
 
-void httppost::load()
+void httppost::url_encode_body_load()
 {
 	QString file_name = get_open_file_name("Http Post Data(*.hpd)");
 	if (file_name.isEmpty()){
@@ -398,9 +443,10 @@ void httppost::form_save()
 	}
 
 	//table 转json 格式
-	QJsonObject v = key_value_table_to_json(ui.tableWidgetFormData);
+	QJsonObject v;
+	v["form"] = ui.tableWidgetFormData->data().to_json();
 	v["url"] = ui.lineEditUrl->text();
-	v["headers"] = key_value_table_to_json(ui.tableWidgetHeaders);
+	v["headers"] = ui.tableWidgetHeaders->data().to_json();
 
 	save_json_file(file_name, v);
 }
@@ -415,10 +461,11 @@ void httppost::form_load()
 
 	QJsonObject v = load_json_file(file_name);
 	ui.lineEditUrl->setText(v["url"].toString());
-	key_value_json_to_table(v, ui.tableWidgetFormData);
+	QJsonValue form = v["form"];
+	ui.tableWidgetFormData->set_data(http_form_data_list::from_json(form));
 
-	QJsonObject h = v["headers"].toObject();
-	key_value_json_to_table(h, ui.tableWidgetHeaders);
+	QJsonValue h = v["headers"];
+	ui.tableWidgetHeaders->set_data(http_data_list::from_json(v));
 }
 
 
@@ -473,7 +520,11 @@ void httppost::header_load()
 	}
 
 	QJsonObject v = load_json_file(file_name);
-	key_value_json_to_table(v, ui.tableWidgetHeaders);
+	QJsonValue h = v["headers"];
+
+	http_data_list headers;
+	headers.append_from_json(h);
+	ui.tableWidgetHeaders->set_data(headers);
 }
 
 
@@ -484,67 +535,34 @@ void httppost::header_save()
 		return;
 	}
 
-
 	//table 值转json object
-	QJsonObject v = key_value_table_to_json(ui.tableWidgetHeaders);
-
+	QJsonObject v;
+	v["headers"] = ui.tableWidgetHeaders->data().to_json();
 	save_json_file(file_name, v);
 }
-
-
-QJsonObject httppost::key_value_table_to_json(QTableWidget *tableWidget)
-{
-	QJsonArray keys, values;
-	for (int row = 0; row < tableWidget->rowCount(); row++){
-		QTableWidgetItem *key_item = tableWidget->item(row, 0);
-		QString key = key_item ? key_item->data(0).toString() : "";
-		keys.append(key);
-
-		QTableWidgetItem *value_item = tableWidget->item(row, 1);
-		QString value = value_item ? value_item->data(0).toString() : "";
-		values.append(value);
-	}
-
-	QJsonObject v;
-	v["keys"] = keys;
-	v["values"] = values;
-
-	return v;
-}
-
-void httppost::key_value_json_to_table(QJsonObject &v, QTableWidget *tableWidget)
-{
-	QJsonArray keys = v["keys"].toArray();
-	QJsonArray values = v["values"].toArray();
-	if (keys.count() != values.count()){
-		QMessageBox::warning(this, "Json数据错误", "json数据中Key-Value 数据不一致。", QMessageBox::Ok);
-		return;
-	}
-
-	tableWidget->setRowCount(keys.count());
-	for (int i = 0; i < keys.size(); i++){
-		tableWidget->setItem(i, 0, new QTableWidgetItem(keys[i].toString()));
-		tableWidget->setItem(i, 1, new QTableWidgetItem(values[i].toString()));
-	}
-}
-
 
 void httppost::form_data_table_to_multi_part(QHttpMultiPart* multi_part,
 	QTableWidget *tableWidget)
 {
 	for (int row = 0; row < tableWidget->rowCount(); row++){
-		QTableWidgetItem *key_item = tableWidget->item(row, 0);
-		QString key = key_item ? key_item->data(0).toString() : "";
-		if (key.isEmpty()){
+
+		QTableWidgetItem *name_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_NAME);
+		QString name = name_item ? name_item->data(0).toString() : "";
+
+		QTableWidgetItem *content_type_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_CONTENT_TYPE);
+		QString content_type = content_type_item ? content_type_item->data(0).toString() : "";
+		if (content_type.isEmpty()){
 			continue;
 		}
 
-		QTableWidgetItem *value_item = tableWidget->item(row, 1);
+		QTableWidgetItem *value_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_VALUE);
 		QString value = value_item ? value_item->data(0).toString() : "";
 
 		if (!QFile::exists(value)){
 			QHttpPart textPart;
-			textPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"text\""));
+			textPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(content_type));
+			textPart.setHeader(QNetworkRequest::ContentDispositionHeader,
+				QVariant(QString("form-data; name=\"%1\"").arg(name)));
 			textPart.setBody(value.toUtf8());
 			multi_part->append(textPart);
 		}
@@ -560,8 +578,9 @@ void httppost::form_data_table_to_multi_part(QHttpMultiPart* multi_part,
 			file->setParent(multi_part); // we cannot delete the file now, so delete it with the multiPart
 
 			QHttpPart part;
-			part.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(key));
-			part.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\""+ file->fileName() +"\""));
+			part.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(content_type));
+			part.setHeader(QNetworkRequest::ContentDispositionHeader, 
+				QVariant(QString("form-data; name=\"%1\"").arg(name)));
 			part.setBodyDevice(file);
 			multi_part->append(part);
 		}
@@ -569,23 +588,34 @@ void httppost::form_data_table_to_multi_part(QHttpMultiPart* multi_part,
 	}
 }
 
-void httppost::update_request_custom_header(QNetworkRequest *request)
+void httppost::update_request_custom_header(const http_data_list& items, QNetworkRequest *request)
 {
-	QTableWidget *table_widget = ui.tableWidgetHeaders;
-	for (int row = 0; row < table_widget->rowCount(); row++){
-		QTableWidgetItem *key_item = table_widget->item(row, 0);
-		QString key = key_item ? key_item->data(0).toString() : "";
+	for (auto it = items.begin(); it != items.end(); ++it){
+		http_data_constptr pdi = *it;
+		QString key = pdi->key();
 		if (key.isEmpty()){
 			continue;
 		}
 
-		QTableWidgetItem *value_item = table_widget->item(row, 1);
-		QString value = value_item ? value_item->data(0).toString() : "";
-
+		QString value = pdi->value();
 		request->setRawHeader(key.toUtf8(), value.toUtf8());
 	}
 }
 
+void httppost::initialize_script_engine(http_script_engine *engine)
+{
+	QString startup_script("http_post_startup.js");
+	QFile script_file(startup_script);
+	script_file.open(QIODevice::ReadOnly);
+	engine->evaluate(script_file.readAll(), startup_script);
+	script_file.close();
+
+	QScriptValue ctor = engine->evaluate("http_post");
+	if (ctor.isValid() && !ctor.isError()){
+		QScriptValue http_post_ui = engine->newQObject(this, QScriptEngine::ScriptOwnership);
+		QScriptValue http_post = ctor.construct(QScriptValueList() << http_post_ui);
+	}
+}
 
 void httppost::insert_form_data(const QString& type, const QString& file_name)
 {
@@ -595,10 +625,13 @@ void httppost::insert_form_data(const QString& type, const QString& file_name)
 
 	int row = ui.tableWidgetFormData->rowCount();
 	ui.tableWidgetFormData->setRowCount(row + 1);
-	ui.tableWidgetFormData->setItem(row, 0, new QTableWidgetItem(type));
-	ui.tableWidgetFormData->setItem(row, 1, new QTableWidgetItem(file_name));
+	ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_NAME, 
+		new QTableWidgetItem(QFileInfo(file_name).fileName()));
+	ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_CONTENT_TYPE,
+		new QTableWidgetItem(type));
+	ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_VALUE,
+		new QTableWidgetItem(file_name));
 }
-
 
 QString httppost::get_open_file_name(const QString& filter)
 {
@@ -656,10 +689,10 @@ void httppost::save_url_encode_post_data(const QString& file_name)
 {
 
 	//table 转json 格式
-	QJsonObject v = key_value_table_to_json(ui.tableWidgetKeyValue);
+	QJsonObject v;
+	v["url_encode"] =ui.tableWidgetUrlEncode->data().to_json();
 	v["url"] = ui.lineEditUrl->text();
-	v["headers"] = key_value_table_to_json(ui.tableWidgetHeaders);
-
+	v["headers"] = ui.tableWidgetHeaders->data().to_json();
 	save_json_file(file_name, v);
 }
 
@@ -672,10 +705,11 @@ void httppost::load_url_encode_post_data(const QString& file_name)
 	QJsonObject v = load_json_file(file_name);
 
 	ui.lineEditUrl->setText(v["url"].toString());
-	key_value_json_to_table(v, ui.tableWidgetKeyValue);
+	QJsonValue url_encode = v["url_encode"];
+	ui.tableWidgetUrlEncode->set_data(http_data_list::from_json(url_encode));
 
-	QJsonObject h = v["headers"].toObject();
-	key_value_json_to_table(h, ui.tableWidgetHeaders);
+	QJsonValue h = v["headers"];
+	ui.tableWidgetHeaders->set_data(http_data_list::from_json(h));
 }
 
 QJsonObject httppost::load_json_file(const QString& file_name)
@@ -698,6 +732,12 @@ QJsonObject httppost::load_json_file(const QString& file_name)
 		return QJsonObject();
 	}
 
+	QJsonObject obj = doc.object();
+	if (!obj.contains("json_file_version") || obj["json_file_version"] != JSON_FILE_VERSION){
+		QMessageBox::warning(this, "Json 错误", "json数据版本不符。", QMessageBox::Ok);
+		return QJsonObject();
+	}
+
 	return doc.object();
 }
 
@@ -708,6 +748,9 @@ void httppost::save_json_file(const QString& file_name, const QJsonObject& v)
 		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
 		return;
 	}
+
+	QJsonObject& ov = const_cast<QJsonObject&>(v);
+	ov["json_file_version"] = JSON_FILE_VERSION;
 
 	QJsonDocument doc(v);
 	file.write(doc.toJson());

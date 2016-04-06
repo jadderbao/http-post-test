@@ -4,7 +4,10 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_httppost.h"
 #include "config.h"
-#include <QJsonObject>
+#include "http_data.h"
+#include <QJsonValue>
+
+class http_request_body;
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -12,6 +15,11 @@ class QNetworkRequest;
 class QNetworkCookieJar;
 class QProgressBar;
 class QHttpMultiPart;
+class QTableWidget;
+
+class http_script_engine;
+
+typedef QMap<QString, QString> key_value_map;
 
 class httppost : public QMainWindow
 {
@@ -22,14 +30,38 @@ public:
 	~httppost();
 	void show_reply(QNetworkReply * reply);
 	QString get_url_encode_body();
+
 	void load_url_encode_post_data(const QString& file_name);
 	void save_url_encode_post_data(const QString& file_name);
-	QByteArray url_encode(QString &key);
-	QJsonObject key_value_table_to_json(QTableWidget *tableWidget);
-	void key_value_json_to_table(QJsonObject &v, QTableWidget *tableWidget);
+	QByteArray url_encode(const QString &key);
+	QJsonValue form_data_table_to_json(QTableWidget *tableWidget);
+	void form_data_json_to_table(QJsonValue &v, QTableWidget *tableWidget);
+	QJsonValue headers_table_to_json(QTableWidget *tableWidget);
+	void headers_json_to_table(QJsonValue &v, QTableWidget *tableWidget);
 	void form_data_table_to_multi_part(QHttpMultiPart* multi_part, QTableWidget *tableWidget);
-	void update_request_custom_header(QNetworkRequest *request);
 	void insert_form_data(const QString& type, const QString& file_name);
+
+protected:
+	void set_table_widgets();
+
+protected:
+	bool get_ui_data_items(http_data_list& items);
+	void add_post_data_item(http_data_list& items, http_data_ptr item);
+	bool process_and_update_item_value(http_data_list& items, QString& error);
+
+	void http_post(QUrl &url, http_request_body * http_body, const http_data_list &items);
+	void http_post(QUrl &url, const QByteArray &body, const http_data_list &items);
+	void http_post(QUrl &url, QHttpMultiPart *multi_part, const http_data_list &items);
+
+	void post_url_encoded(QUrl& url);
+	void post_byte_data(QUrl& url, const QByteArray& data);
+	void post_multi_part(QUrl& url);
+
+public:
+	void update_request_custom_header(const http_data_list& items, QNetworkRequest *request);
+
+public:
+	void initialize_script_engine(http_script_engine *engine);
 
 public slots:
 	void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
@@ -39,10 +71,10 @@ public slots:
 	void post();
 	void get();
 
-	void insert();
-	void remove();
-	void save();
-	void load();
+	void url_encode_body_insert();
+	void url_encode_body_remove();
+	void url_encode_body_save();
+	void url_encode_body_load();
 
 	void form_add_text();
 	void form_add_image();
@@ -80,6 +112,7 @@ private:
 	QNetworkCookieJar *cookie_jar;
 	QProgressBar *progress_bar;
 	QString last_file_name;
+	http_script_engine *_engine;
 };
 
 #endif // HTTPPOST_H

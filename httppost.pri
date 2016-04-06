@@ -14,3 +14,6 @@ SOURCES += ./httppost.cpp \
 FORMS += ./httppost.ui
 TRANSLATIONS += ./httppost_zh.ts
 RESOURCES += httppost.qrc
+
+DISTFILES += \
+    $$PWD/httppost_zh.ts

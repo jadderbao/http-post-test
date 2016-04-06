@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
-    <height>602</height>
+    <width>634</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>httppost</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_8">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -26,6 +26,23 @@
       </item>
       <item>
        <widget class="QLineEdit" name="lineEditUrl"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
        <widget class="QPushButton" name="pushButtonPost">
@@ -56,7 +73,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <property name="elideMode">
         <enum>Qt::ElideMiddle</enum>
@@ -65,9 +82,16 @@
         <attribute name="title">
          <string>x-www-form-urlencoded</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QTableWidget" name="tableWidgetKeyValue">
+          <widget class="QCheckBox" name="checkBoxAutoUCenterAuthentication">
+           <property name="text">
+            <string>Auto UCenter Authentication</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="url_encode_table_widget" name="tableWidgetUrlEncode">
            <property name="styleSheet">
             <string notr="true"/>
            </property>
@@ -78,13 +102,35 @@
            </column>
            <column>
             <property name="text">
+             <string>Post Type</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Auth</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Value Type</string>
+            </property>
+            <property name="background">
+             <color>
+              <red>255</red>
+              <green>170</green>
+              <blue>0</blue>
+             </color>
+            </property>
+           </column>
+           <column>
+            <property name="text">
              <string>Value</string>
             </property>
            </column>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QPushButton" name="pushButtonInsert">
              <property name="text">
@@ -98,19 +144,6 @@
               <string>Remove</string>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonLoad">
@@ -134,12 +167,17 @@
         <attribute name="title">
          <string>multipart/form-data</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QTableWidget" name="tableWidgetFormData">
+          <widget class="form_data_table_widget" name="tableWidgetFormData">
            <column>
             <property name="text">
-             <string>Content-Type(Mime-Type)</string>
+             <string>name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Content-Type</string>
             </property>
            </column>
            <column>
@@ -150,7 +188,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <widget class="QPushButton" name="pushButtonFormInsertText">
              <property name="enabled">
@@ -202,19 +240,6 @@
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <widget class="QPushButton" name="pushButtonFormLoad">
              <property name="enabled">
               <bool>true</bool>
@@ -242,25 +267,12 @@
         <attribute name="title">
          <string>application/json</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
           <widget class="QPlainTextEdit" name="plainTextEditJson"/>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="QPushButton" name="pushButtonJsonLoad">
              <property name="text">
@@ -283,25 +295,12 @@
         <attribute name="title">
          <string>text/xml</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
           <widget class="QPlainTextEdit" name="plainTextEditText"/>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-           <item>
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QPushButton" name="pushButtonTextLoad">
              <property name="text">
@@ -324,9 +323,9 @@
         <attribute name="title">
          <string>Headers</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <widget class="QTableWidget" name="tableWidgetHeaders">
+          <widget class="headers_table_widget" name="tableWidgetHeaders">
            <property name="styleSheet">
             <string notr="true"/>
            </property>
@@ -337,13 +336,28 @@
            </column>
            <column>
             <property name="text">
+             <string>Post Type</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Auth</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Value Type</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
              <string>Value</string>
             </property>
            </column>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
             <widget class="QPushButton" name="pushButtonHeaderInsert">
              <property name="text">
@@ -357,19 +371,6 @@
               <string>Remove</string>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonHeaderLoad">
@@ -446,8 +447,23 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="httppost.qrc"/>
- </resources>
+ <customwidgets>
+  <customwidget>
+   <class>form_data_table_widget</class>
+   <extends>QTableWidget</extends>
+   <header>form_data_table_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>url_encode_table_widget</class>
+   <extends>QTableWidget</extends>
+   <header>url_encode_table_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>headers_table_widget</class>
+   <extends>QTableWidget</extends>
+   <header>headers_table_widget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
  <connections/>
 </ui>
