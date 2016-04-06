@@ -76,6 +76,7 @@ httppost::httppost(QWidget *parent)
 
 	progress_bar = new QProgressBar;
 	progress_bar->setVisible(false);
+	progress_bar->setMaximum(0);
 	ui.statusBar->addPermanentWidget(progress_bar);
 
 	ui.tabWidgetPostBody->setCurrentIndex(0);
@@ -135,9 +136,9 @@ void httppost::set_table_widgets()
 
 void httppost::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
-	if (bytesReceived == 0){
-		progress_bar->setVisible(true);
+	if (progress_bar->maximum() == 0){
 		progress_bar->setMaximum(bytesTotal);
+		progress_bar->setVisible(true);
 		progress_bar->setTextVisible(true);
 	}
 
@@ -147,7 +148,7 @@ void httppost::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 
 void httppost::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 {
-	if (bytesSent == 0){
+	if (progress_bar->maximum() == 0){
 		progress_bar->setVisible(true);
 		progress_bar->setMaximum(bytesTotal);
 		progress_bar->setTextVisible(true);
@@ -159,6 +160,7 @@ void httppost::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 
 void httppost::finished()
 {
+	progress_bar->setMaximum(0);
 	progress_bar->setVisible(false);
 }
 
