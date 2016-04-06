@@ -8,7 +8,7 @@
         <translation type="obsolete">打开文本文件</translation>
     </message>
     <message>
-        <location filename="httppost.cpp" line="365"/>
+        <location filename="httppost.cpp" line="409"/>
         <source>Image Files (*.txt *.log *.xml *.json)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17,7 +17,7 @@
         <translation type="obsolete">打开图片</translation>
     </message>
     <message>
-        <location filename="httppost.cpp" line="372"/>
+        <location filename="httppost.cpp" line="416"/>
         <source>Image Files (*.png *.jpg *.bmp)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26,12 +26,12 @@
         <translation type="obsolete">打开任意文件</translation>
     </message>
     <message>
-        <location filename="httppost.cpp" line="379"/>
+        <location filename="httppost.cpp" line="423"/>
         <source>All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.cpp" line="555"/>
+        <location filename="httppost.cpp" line="572"/>
         <source>File Open Error</source>
         <translation type="unfinished">文件打开出错</translation>
     </message>
@@ -40,25 +40,25 @@
     <name>httppostClass</name>
     <message>
         <location filename="httppost.ui" line="14"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="434"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="458"/>
         <source>httppost</source>
         <translation type="unfinished">HTTP POST 测试软件</translation>
     </message>
     <message>
         <location filename="httppost.ui" line="23"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="435"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="459"/>
         <source>URL</source>
         <translation type="unfinished">网站Url</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="37"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="436"/>
+        <location filename="httppost.ui" line="89"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="462"/>
         <source>Auto UCenter Authentication</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="44"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="437"/>
+        <location filename="httppost.ui" line="50"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="460"/>
         <source>POST</source>
         <translation type="unfinished">POST提交</translation>
     </message>
@@ -67,116 +67,146 @@
         <translation type="obsolete">键-值对</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="54"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="438"/>
+        <location filename="httppost.ui" line="60"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="461"/>
         <source>GET</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="77"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="447"/>
+        <location filename="httppost.ui" line="83"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="477"/>
         <source>x-www-form-urlencoded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="87"/>
-        <location filename="httppost.ui" line="294"/>
-        <location filename="httppost.ui" line="372"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="440"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="467"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="478"/>
+        <location filename="httppost.ui" line="100"/>
+        <location filename="httppost.ui" line="334"/>
+        <location filename="httppost.ui" line="427"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="464"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="499"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="516"/>
         <source>Key</source>
         <translation type="unfinished">键</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="92"/>
-        <location filename="httppost.ui" line="299"/>
-        <location filename="httppost.ui" line="377"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="442"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="469"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="480"/>
+        <location filename="httppost.ui" line="105"/>
+        <location filename="httppost.ui" line="339"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="466"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="501"/>
+        <source>Post Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="httppost.ui" line="110"/>
+        <location filename="httppost.ui" line="344"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="468"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="503"/>
+        <source>Auth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="httppost.ui" line="115"/>
+        <location filename="httppost.ui" line="349"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="470"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="505"/>
+        <source>Value Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="httppost.ui" line="127"/>
+        <location filename="httppost.ui" line="354"/>
+        <location filename="httppost.ui" line="432"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="472"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="507"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="518"/>
         <source>Value</source>
         <translation type="unfinished">值</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="102"/>
-        <location filename="httppost.ui" line="188"/>
-        <location filename="httppost.ui" line="309"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="443"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="455"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="470"/>
+        <location filename="httppost.ui" line="137"/>
+        <location filename="httppost.ui" line="228"/>
+        <location filename="httppost.ui" line="364"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="473"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="487"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="508"/>
         <source>Insert</source>
         <translation type="unfinished">插入</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="109"/>
-        <location filename="httppost.ui" line="198"/>
-        <location filename="httppost.ui" line="316"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="444"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="456"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="471"/>
+        <location filename="httppost.ui" line="144"/>
+        <location filename="httppost.ui" line="238"/>
+        <location filename="httppost.ui" line="371"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="474"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="488"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="509"/>
         <source>Remove</source>
         <translation type="unfinished">移除</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="133"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="459"/>
+        <location filename="httppost.ui" line="168"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="491"/>
         <source>multipart/form-data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="140"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="449"/>
-        <source>Content-Type(Mime-Type)</source>
+        <location filename="httppost.ui" line="175"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="479"/>
+        <source>name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="145"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="451"/>
+        <location filename="httppost.ui" line="180"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="481"/>
+        <source>Content-Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="httppost.ui" line="185"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="483"/>
         <source>Full File Path Name</source>
         <translation type="unfinished">文件路径</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="158"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="452"/>
+        <location filename="httppost.ui" line="198"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="484"/>
         <source>Add Text</source>
         <translation type="unfinished">添加文本</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="168"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="453"/>
+        <location filename="httppost.ui" line="208"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="485"/>
         <source>Add Image</source>
         <translation type="unfinished">添加图片</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="178"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="454"/>
+        <location filename="httppost.ui" line="218"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="486"/>
         <source>Add Raw</source>
         <translation type="unfinished">添加文件</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="228"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="462"/>
+        <location filename="httppost.ui" line="268"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="494"/>
         <source>application/json</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="256"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="465"/>
+        <location filename="httppost.ui" line="296"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="497"/>
         <source>text/xml</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="284"/>
-        <location filename="httppost.ui" line="365"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="474"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="481"/>
+        <location filename="httppost.ui" line="324"/>
+        <location filename="httppost.ui" line="420"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="512"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="519"/>
         <source>Headers</source>
         <translation type="unfinished">头</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="355"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="476"/>
+        <location filename="httppost.ui" line="410"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="514"/>
         <source>Content</source>
         <translation type="unfinished">内容</translation>
     </message>
@@ -189,30 +219,30 @@
         <translation type="obsolete">向下</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="116"/>
-        <location filename="httppost.ui" line="208"/>
-        <location filename="httppost.ui" line="239"/>
-        <location filename="httppost.ui" line="267"/>
-        <location filename="httppost.ui" line="323"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="445"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="457"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="460"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="463"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="472"/>
+        <location filename="httppost.ui" line="151"/>
+        <location filename="httppost.ui" line="248"/>
+        <location filename="httppost.ui" line="279"/>
+        <location filename="httppost.ui" line="307"/>
+        <location filename="httppost.ui" line="378"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="475"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="489"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="492"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="495"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="510"/>
         <source>Load</source>
         <translation type="unfinished">打开</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="123"/>
-        <location filename="httppost.ui" line="218"/>
-        <location filename="httppost.ui" line="246"/>
-        <location filename="httppost.ui" line="274"/>
-        <location filename="httppost.ui" line="330"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="446"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="458"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="461"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="464"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="473"/>
+        <location filename="httppost.ui" line="158"/>
+        <location filename="httppost.ui" line="258"/>
+        <location filename="httppost.ui" line="286"/>
+        <location filename="httppost.ui" line="314"/>
+        <location filename="httppost.ui" line="385"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="476"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="490"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="493"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="496"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="511"/>
         <source>Save</source>
         <translation type="unfinished">保存</translation>
     </message>
@@ -221,8 +251,8 @@
         <translation type="obsolete">自动定义Body</translation>
     </message>
     <message>
-        <location filename="httppost.ui" line="344"/>
-        <location filename="GeneratedFiles/ui_httppost.h" line="475"/>
+        <location filename="httppost.ui" line="399"/>
+        <location filename="GeneratedFiles/ui_httppost.h" line="513"/>
         <source>Response</source>
         <translation type="unfinished">网站返回内容</translation>
     </message>

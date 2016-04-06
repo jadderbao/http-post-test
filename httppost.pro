@@ -4,16 +4,16 @@
 
 TEMPLATE = app
 TARGET = httppost
-DESTDIR = ./Bin/Release
+DESTDIR = ./Win32/Debug
 QT += core network script widgets gui
-CONFIG += release
+CONFIG += debug
 DEFINES += WIN64 QT_DLL QT_SCRIPT_LIB QT_WIDGETS_LIB QT_NETWORK_LIB
 INCLUDEPATH += ./GeneratedFiles \
     . \
-    ./GeneratedFiles/Release
+    ./GeneratedFiles/Debug
 DEPENDPATH += .
-MOC_DIR += ./GeneratedFiles/release
-OBJECTS_DIR += release
+MOC_DIR += ./GeneratedFiles/debug
+OBJECTS_DIR += debug
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 include(httppost.pri)

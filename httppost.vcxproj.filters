@@ -89,19 +89,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h" />
-    <ClInclude Include="GeneratedFiles\ui_httppost.h" />
-    <ClInclude Include="code\base64.h">
-      <Filter>code</Filter>
-    </ClInclude>
-    <ClInclude Include="code\md5.h">
-      <Filter>code</Filter>
-    </ClInclude>
-    <ClInclude Include="code\ucenter_authcode.h">
-      <Filter>code</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="httppost.h" />
     <CustomBuild Include="httppost.ui" />
     <CustomBuild Include="httppost.qrc" />
@@ -129,15 +116,24 @@
     <CustomBuild Include="http_data.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="config.h" />
+    <CustomBuild Include="GeneratedFiles\ui_httppost.h" />
+    <CustomBuild Include="httppost_zh.ts" />
+    <CustomBuild Include="code\base64.h">
+      <Filter>code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="code\md5.h">
+      <Filter>code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="code\ucenter_authcode.h">
+      <Filter>code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="code\LICENSE">
+      <Filter>code</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="httppost.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="httppost_zh.ts" />
-    <None Include="code\LICENSE">
-      <Filter>code</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

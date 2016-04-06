@@ -8,12 +8,34 @@ message("You are running qmake on a generated .pro file. This may not work!")
 
 
 HEADERS += ./config.h \
-    ./httppost.h
-SOURCES += ./httppost.cpp \
-    ./main.cpp
+    ./GeneratedFiles/ui_httppost.h \
+    ./httppost.h \
+    ./url_encode_table_widget.h \
+    ./headers_table_widget.h \
+    ./form_data_table_widget.h \
+    ./table_widget_delegate.h \
+    ./http_data.h \
+    ./http_client.h \
+    ./http_script_engine.h \
+    ./post_data_process.h \
+    ./code/base64.h \
+    ./code/md5.h \
+    ./code/ucenter_authcode.h
+SOURCES += ./GeneratedFiles/Debug/moc_httppost.cpp \
+    ./GeneratedFiles/qrc_httppost.cpp \
+    ./httppost.cpp \
+    ./main.cpp \
+    ./form_data_table_widget.cpp \
+    ./headers_table_widget.cpp \
+    ./http_client.cpp \
+    ./http_script_engine.cpp \
+    ./http_data.cpp \
+    ./post_data_process.cpp \
+    ./table_widget_delegate.cpp \
+    ./url_encode_table_widget.cpp \
+    ./code/base64.cpp \
+    ./code/md5.cpp \
+    ./code/ucenter_authcode.cpp
 FORMS += ./httppost.ui
 TRANSLATIONS += ./httppost_zh.ts
 RESOURCES += httppost.qrc
-
-DISTFILES += \
-    $$PWD/httppost_zh.ts
