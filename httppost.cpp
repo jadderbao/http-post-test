@@ -648,7 +648,7 @@ void httppost::form_data_table_to_multi_part(QHttpMultiPart* multi_part,
 			QHttpPart part;
 			part.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(content_type));
 			part.setHeader(QNetworkRequest::ContentDispositionHeader, 
-				QVariant(QString("form-data; name=\"f%1\"; filename=\"%2\"").arg(name).arg(file->fileName())));
+				QVariant(QString("form-data; name=\"%1\"; filename=\"%2\"").arg(name).arg(file->fileName())));
 			part.setBodyDevice(file);
 			multi_part->append(part);
 		}
