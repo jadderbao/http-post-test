@@ -2,7 +2,7 @@
 #include "http_data.h"
 
 url_encode_table_widget::url_encode_table_widget(QWidget *parent)
-	: QTableWidget(parent)
+	: table_widget(parent)
 {
 }
 
@@ -14,7 +14,7 @@ url_encode_table_widget::~url_encode_table_widget()
 void url_encode_table_widget::set_default_column_size()
 {
 	setColumnWidth(URL_ENCODE_COLUMN_AUTH, 60);
-	setColumnWidth(URL_ENCODE_COLUMN_VALUE, 600);
+	setColumnWidth(URL_ENCODE_COLUMN_VALUE, 300);
 }
 
 void url_encode_table_widget::showEvent(QShowEvent *event)

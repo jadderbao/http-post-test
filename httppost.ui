@@ -146,6 +146,20 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="pushButtonUrlEncodeUp">
+             <property name="text">
+              <string>Up</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUrlEncodeDown">
+             <property name="text">
+              <string>Down</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButtonLoad">
              <property name="text">
               <string>Load</string>
@@ -236,6 +250,20 @@
              </property>
              <property name="text">
               <string>Remove</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonFormDataUp">
+             <property name="text">
+              <string>Up</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonFormDataDown">
+             <property name="text">
+              <string>Down</string>
              </property>
             </widget>
            </item>
@@ -369,6 +397,20 @@
             <widget class="QPushButton" name="pushButtonHeaderRemove">
              <property name="text">
               <string>Remove</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonHeadersUp">
+             <property name="text">
+              <string>Up</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonHeadersDown">
+             <property name="text">
+              <string>Down</string>
              </property>
             </widget>
            </item>

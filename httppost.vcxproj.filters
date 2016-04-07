@@ -87,6 +87,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_http_data.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="table_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_table_widget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_table_widget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="httppost.h" />
@@ -130,6 +139,9 @@
     </CustomBuild>
     <CustomBuild Include="code\LICENSE">
       <Filter>code</Filter>
+    </CustomBuild>
+    <CustomBuild Include="table_widget.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

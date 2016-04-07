@@ -1,10 +1,10 @@
 #ifndef URL_ENCODE_TABLE_WIDGET_H
 #define URL_ENCODE_TABLE_WIDGET_H
 
-#include <QTableWidget>
+#include "table_widget.h"
 #include "http_data.h"
 
-class url_encode_table_widget : public QTableWidget
+class url_encode_table_widget : public table_widget
 {
 	Q_OBJECT
 

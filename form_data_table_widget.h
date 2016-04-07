@@ -1,10 +1,10 @@
 #ifndef FORM_DATA_TABLE_WIDGET_H
 #define FORM_DATA_TABLE_WIDGET_H
 
-#include <QTableWidget>
+#include "table_widget.h"
 #include "http_data.h"
 
-class form_data_table_widget : public QTableWidget
+class form_data_table_widget : public table_widget
 {
 	Q_OBJECT
 

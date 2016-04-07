@@ -1,7 +1,7 @@
 #include "form_data_table_widget.h"
 
 form_data_table_widget::form_data_table_widget(QWidget *parent)
-: QTableWidget(parent)
+: table_widget(parent)
 {
 }
 
@@ -14,7 +14,7 @@ void form_data_table_widget::set_default_column_size()
 {
 	setColumnWidth(FORM_DATA_COLUMN_NAME, 100);
 	setColumnWidth(FORM_DATA_COLUMN_CONTENT_TYPE, 100);
-	setColumnWidth(FORM_DATA_COLUMN_VALUE, 600);
+	setColumnWidth(FORM_DATA_COLUMN_VALUE, 300);
 }
 
 void form_data_table_widget::showEvent(QShowEvent *event)

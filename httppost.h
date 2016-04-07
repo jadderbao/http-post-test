@@ -49,12 +49,13 @@ protected:
 	void add_post_data_item(http_data_list& items, http_data_ptr item);
 	bool process_and_update_item_value(http_data_list& items, QString& error);
 
-	void http_post(QUrl &url, http_request_body * http_body, const http_data_list &items);
-	void http_post(QUrl &url, const QByteArray &body, const http_data_list &items);
+	void http_post(QUrl &url, http_request_body * http_body, const http_data_list &items,
+		const QString& content_type = QString());
+	void http_post(QUrl &url, const QByteArray &body, const http_data_list &items, const QString& content_type);
 	void http_post(QUrl &url, QHttpMultiPart *multi_part, const http_data_list &items);
 
 	void post_url_encoded(QUrl& url);
-	void post_byte_data(QUrl& url, const QByteArray& data);
+	void post_byte_data(QUrl& url, const QByteArray& data, const QString& content_type);
 	void post_multi_part(QUrl& url);
 
 public:
@@ -64,6 +65,9 @@ public:
 	void initialize_script_engine(http_script_engine *engine);
 
 public slots:
+	void move_row_up();
+	void move_row_down();
+
 	void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 	void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 	void finished();
