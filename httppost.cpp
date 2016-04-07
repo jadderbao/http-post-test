@@ -355,7 +355,7 @@ void httppost::http_post(QUrl &url, http_request_body * http_body,
 	QSharedPointer<http_request> request(new http_request(url));
 
 	request->set_body(http_body);
-	update_request_custom_header(items, request->request());
+	update_request_custom_header(items.get_post_datas(http_data::POST_TYPE_HEADER), request->request());
 	if (!content_type.isEmpty()){
 		request->request()->setHeader(QNetworkRequest::ContentTypeHeader, content_type);
 	}
@@ -413,8 +413,25 @@ void httppost::post_multi_part(QUrl& url)
 	}
 
 	QHttpMultiPart *multi_part = new QHttpMultiPart();
+
+	update_body_to_multi_part(items, multi_part);
 	form_data_table_to_multi_part(multi_part, ui.tableWidgetFormData);
 	http_post(url, multi_part, items);
+}
+
+void httppost::update_body_to_multi_part(const http_data_list &items, QHttpMultiPart * multi_part)
+{
+	//更新需要提交到body上的值
+	for (int i = 0; i < items.count(); i++){
+		const http_data_ptr& hdp = items[i];
+		if (hdp->post_type() == http_data::POST_TYPE_BODY){
+			QHttpPart textPart;
+			textPart.setHeader(QNetworkRequest::ContentDispositionHeader,
+				QVariant(QString("form-data; name=\"%1\"").arg(hdp->key())));
+			textPart.setBody(hdp->value().toUtf8());
+			multi_part->append(textPart);
+		}
+	}
 }
 
 void httppost::url_encode_body_insert()
@@ -596,22 +613,6 @@ void httppost::header_save()
 void httppost::form_data_table_to_multi_part(QHttpMultiPart* multi_part,
 	QTableWidget *tableWidget)
 {
-	http_data_list items;
-	if (!get_ui_data_items(items)){
-		return;
-	}
-	
-	for (int i = 0; i < items.count(); i++){
-		http_data_ptr& hdp = items[i];
-		if (hdp->post_type() == http_data::POST_TYPE_BODY){
-			QHttpPart textPart;
-			textPart.setHeader(QNetworkRequest::ContentDispositionHeader,
-				QVariant(QString("form-data; name=\"%1\"").arg(hdp->key())));
-			textPart.setBody(hdp->value().toUtf8());
-			multi_part->append(textPart);
-		}
-	}
-
 	for (int row = 0; row < tableWidget->rowCount(); row++){
 
 		QTableWidgetItem *name_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_NAME);

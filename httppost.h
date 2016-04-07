@@ -39,6 +39,7 @@ public:
 	QJsonValue headers_table_to_json(QTableWidget *tableWidget);
 	void headers_json_to_table(QJsonValue &v, QTableWidget *tableWidget);
 	void form_data_table_to_multi_part(QHttpMultiPart* multi_part, QTableWidget *tableWidget);
+	void update_body_to_multi_part(const http_data_list &items, QHttpMultiPart * multi_part);
 	void insert_form_data(const QString& type, const QString& file_name);
 
 protected:
@@ -57,7 +58,6 @@ protected:
 	void post_url_encoded(QUrl& url);
 	void post_byte_data(QUrl& url, const QByteArray& data, const QString& content_type);
 	void post_multi_part(QUrl& url);
-
 public:
 	void update_request_custom_header(const http_data_list& items, QNetworkRequest *request);
 
