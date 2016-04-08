@@ -7,9 +7,9 @@
 message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./config.h \
+HEADERS += ./httppost.h \
+    ./config.h \
     ./GeneratedFiles/ui_httppost.h \
-    ./httppost.h \
     ./url_encode_table_widget.h \
     ./headers_table_widget.h \
     ./form_data_table_widget.h \
@@ -18,11 +18,12 @@ HEADERS += ./config.h \
     ./http_client.h \
     ./http_script_engine.h \
     ./post_data_process.h \
+    ./table_widget.h \
     ./code/base64.h \
     ./code/md5.h \
     ./code/ucenter_authcode.h
-SOURCES += ./GeneratedFiles/Debug/moc_httppost.cpp \
-    ./GeneratedFiles/qrc_httppost.cpp \
+SOURCES += ./GeneratedFiles/qrc_httppost.cpp \
+    ./GeneratedFiles/Release/moc_httppost.cpp \
     ./httppost.cpp \
     ./main.cpp \
     ./form_data_table_widget.cpp \
@@ -31,6 +32,7 @@ SOURCES += ./GeneratedFiles/Debug/moc_httppost.cpp \
     ./http_script_engine.cpp \
     ./http_data.cpp \
     ./post_data_process.cpp \
+    ./table_widget.cpp \
     ./table_widget_delegate.cpp \
     ./url_encode_table_widget.cpp \
     ./code/base64.cpp \
