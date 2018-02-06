@@ -39,6 +39,10 @@ httppost::httppost(QWidget *parent)
 	cookie_jar = new QNetworkCookieJar(this);
 	am->setCookieJar(cookie_jar);
 
+    connect(ui.pushButtonPost, &QPushButton::clicked, this, &httppost::post);
+    connect(ui.pushButtonGet, &QPushButton::clicked, this, &httppost::get);
+    connect(ui.pushButtonSend, &QPushButton::clicked, this, &httppost::send);
+
 	connect(ui.pushButtonUrlEncodeUp, &QPushButton::clicked, this, &httppost::move_row_up);
 	connect(ui.pushButtonUrlEncodeDown, &QPushButton::clicked, this, &httppost::move_row_down);
 	connect(ui.pushButtonFormDataUp, &QPushButton::clicked, this, &httppost::move_row_up);
@@ -46,13 +50,10 @@ httppost::httppost(QWidget *parent)
 	connect(ui.pushButtonHeadersDown, &QPushButton::clicked, this, &httppost::move_row_up);
 	connect(ui.pushButtonHeadersDown, &QPushButton::clicked, this, &httppost::move_row_down);
 
-	connect(ui.pushButtonPost, &QPushButton::clicked, this, &httppost::post);
-	connect(ui.pushButtonGet, &QPushButton::clicked, this, &httppost::get);
-
 	connect(ui.pushButtonInsert, &QPushButton::clicked, this, &httppost::url_encode_body_insert);
 	connect(ui.pushButtonRemove, &QPushButton::clicked, this, &httppost::url_encode_body_remove);
-	connect(ui.pushButtonSave, &QPushButton::clicked, this, &httppost::url_encode_body_save);
-	connect(ui.pushButtonLoad, &QPushButton::clicked, this, &httppost::url_encode_body_load);
+    //connect(ui.pushButtonSave, &QPushButton::clicked, this, &httppost::url_encode_body_save);
+    //connect(ui.pushButtonLoad, &QPushButton::clicked, this, &httppost::url_encode_body_load);
 
 	connect(ui.pushButtonFormInsertText, &QPushButton::clicked, this, &httppost::form_add_text);
 	connect(ui.pushButtonFormInsertImage, &QPushButton::clicked, this, &httppost::form_add_image);
@@ -60,19 +61,19 @@ httppost::httppost(QWidget *parent)
 
 	connect(ui.pushButtonFormInsert, &QPushButton::clicked, this, &httppost::form_insert);
 	connect(ui.pushButtonFormRemove, &QPushButton::clicked, this, &httppost::form_remove);
-	connect(ui.pushButtonFormLoad, &QPushButton::clicked, this, &httppost::form_load);
-	connect(ui.pushButtonFormSave, &QPushButton::clicked, this, &httppost::form_save);
+    //connect(ui.pushButtonFormLoad, &QPushButton::clicked, this, &httppost::form_load);
+    //connect(ui.pushButtonFormSave, &QPushButton::clicked, this, &httppost::form_save);
 
-	connect(ui.pushButtonJsonLoad, &QPushButton::clicked, this, &httppost::json_load);
-	connect(ui.pushButtonJsonSave, &QPushButton::clicked, this, &httppost::json_save);
+    //connect(ui.pushButtonJsonLoad, &QPushButton::clicked, this, &httppost::json_load);
+    //connect(ui.pushButtonJsonSave, &QPushButton::clicked, this, &httppost::json_save);
 
-	connect(ui.pushButtonTextLoad, &QPushButton::clicked, this, &httppost::text_load);
-	connect(ui.pushButtonTextSave, &QPushButton::clicked, this, &httppost::text_save);
+    //connect(ui.pushButtonTextLoad, &QPushButton::clicked, this, &httppost::text_load);
+    //connect(ui.pushButtonTextSave, &QPushButton::clicked, this, &httppost::text_save);
 
 	connect(ui.pushButtonHeaderInsert, &QPushButton::clicked, this, &httppost::header_insert);
 	connect(ui.pushButtonHeaderRemove, &QPushButton::clicked, this, &httppost::header_remove);
-	connect(ui.pushButtonHeaderSave, &QPushButton::clicked, this, &httppost::header_save);
-	connect(ui.pushButtonHeaderLoad, &QPushButton::clicked, this, &httppost::header_load);
+    //connect(ui.pushButtonHeaderSave, &QPushButton::clicked, this, &httppost::header_save);
+    //connect(ui.pushButtonHeaderLoad, &QPushButton::clicked, this, &httppost::header_load);
 
 	set_table_widgets();
 
@@ -107,33 +108,17 @@ void httppost::set_table_widgets()
 
 	table_widget_delegate::column_data_map_t map;
 
-	table_widget_delegate::column_data_ptr post_type_column_data(table_widget_delegate::column_data_ptr::create());
-	post_type_column_data->type = table_widget_delegate::WIDGET_COMBOBOX;
-	post_type_column_data->data = QStringList() << POST_TYPE_NONE_STR << POST_TYPE_HEADER_STR;
+    table_widget_delegate::column_data_ptr used_column_data(table_widget_delegate::column_data_ptr::create());
+    used_column_data->type = table_widget_delegate::WIDGET_CHECKBOX;
 
-	map.insert(url_encode_table_widget::URL_ENCODE_COLUMN_POST_TYPE, post_type_column_data);
-
-	table_widget_delegate::column_data_ptr auth_column_data(table_widget_delegate::column_data_ptr::create());
-	auth_column_data->type = table_widget_delegate::WIDGET_CHECKBOX;
-
-	map.insert(url_encode_table_widget::URL_ENCODE_COLUMN_AUTH, auth_column_data);
-
-	table_widget_delegate::column_data_ptr value_type_column_data(table_widget_delegate::column_data_ptr::create());
-	value_type_column_data->type = table_widget_delegate::WIDGET_COMBOBOX;
-	value_type_column_data->data = QStringList() << POST_VALUE_TYPE_VALUE_STR << POST_VALUE_TYPE_UCENTER_AUTHCODE_STR
-		<< POST_VALUE_TYPE_JAVASCRIPT_STR;
-
-	map.insert(url_encode_table_widget::URL_ENCODE_COLUMN_VALUE_TYPE, value_type_column_data);
+    map.insert(key_value_table_widget::URL_ENCODE_COLUMN_USED, used_column_data);
 
 	table_widget_delegate * headers_delgate = new table_widget_delegate(map, ui.tableWidgetHeaders);
 	ui.tableWidgetHeaders->setItemDelegate(headers_delgate);
 
-	table_widget_delegate::column_data_ptr header_post_type_column_data(table_widget_delegate::column_data_ptr::create());
-	header_post_type_column_data->type = table_widget_delegate::WIDGET_COMBOBOX;
-	header_post_type_column_data->data = QStringList() << POST_TYPE_NONE_STR << POST_TYPE_URL_QUERY_STR
-		<< POST_TYPE_BODY_STR << POST_TYPE_HEADER_STR;
+    table_widget_delegate * form_data_delgate = new table_widget_delegate(map, ui.tableWidgetHeaders);
+    ui.tableWidgetFormData->setItemDelegate(form_data_delgate);
 
-	map[url_encode_table_widget::URL_ENCODE_COLUMN_POST_TYPE] = header_post_type_column_data;
 
 	table_widget_delegate * url_encode_delgate = new table_widget_delegate(map, ui.tableWidgetUrlEncode);
 	ui.tableWidgetUrlEncode->setItemDelegate(url_encode_delgate);
@@ -205,12 +190,22 @@ void httppost::finished()
 	progress_bar->setVisible(false);
 }
 
+QUrl httppost::get_url()
+{
+    QUrl url(ui.lineEditUrl->text());
+    if (!url.isValid()){
+        QMessageBox::warning(this, "Url", "无效的Url", QMessageBox::Ok);
+        ui.lineEditUrl->setFocus();
+        return QUrl();
+    }
+
+    return url;
+}
+
 void httppost::post()
 {
-	QUrl url(ui.lineEditUrl->text());
+    QUrl url = get_url();
 	if (!url.isValid()){
-		QMessageBox::warning(this, "Url", "无效的Url", QMessageBox::Ok);
-		ui.lineEditUrl->setFocus();
 		return;
 	}
 
@@ -243,12 +238,10 @@ void httppost::post()
 void httppost::get()
 {
 
-	QUrl url(ui.lineEditUrl->text());
-	if (!url.isValid()){
-		QMessageBox::warning(this, "Url", "无效的Url", QMessageBox::Ok);
-		ui.lineEditUrl->setFocus();
-		return;
-	}
+    QUrl url = get_url();
+    if (!url.isValid()){
+        return;
+    }
 
 	//只有当前项为url_encoded 页时才处理get
 	if (ui.tabWidgetPostBody->currentIndex() != 0){
@@ -275,7 +268,18 @@ void httppost::get()
 	connect(client.data(), &http_client::finished, this, &httppost::finished);
 
 	QNetworkReply *reply = client->get(request.data());
-	show_reply(reply);
+    show_reply(reply);
+}
+
+void httppost::send()
+{
+    QUrl url = get_url();
+    if (!url.isValid()){
+        return;
+    }
+
+
+
 }
 
 void httppost::show_reply(QNetworkReply * reply)
@@ -618,7 +622,7 @@ void httppost::form_data_table_to_multi_part(QHttpMultiPart* multi_part,
 		QTableWidgetItem *name_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_NAME);
 		QString name = name_item ? name_item->data(0).toString() : "";
 
-		QTableWidgetItem *content_type_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_CONTENT_TYPE);
+        QTableWidgetItem *content_type_item = tableWidget->item(row, form_data_table_widget::FORM_DATA_COLUMN_USED);
 		QString content_type = content_type_item ? content_type_item->data(0).toString() : "";
 		if (content_type.isEmpty()){
 			continue;
@@ -670,7 +674,7 @@ void httppost::update_request_custom_header(const http_data_list& items, QNetwor
 
 		QString value = pdi->value();
 		request->setRawHeader(key.toUtf8(), value.toUtf8());
-	}
+    }
 }
 
 void httppost::initialize_script_engine(http_script_engine *engine)
@@ -698,7 +702,7 @@ void httppost::insert_form_data(const QString& type, const QString& file_name)
 	ui.tableWidgetFormData->setRowCount(row + 1);
 	ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_NAME, 
 		new QTableWidgetItem(QFileInfo(file_name).fileName()));
-	ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_CONTENT_TYPE,
+    ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_USED,
 		new QTableWidgetItem(type));
 	ui.tableWidgetFormData->setItem(row, form_data_table_widget::FORM_DATA_COLUMN_VALUE,
 		new QTableWidgetItem(file_name));

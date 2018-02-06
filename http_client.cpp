@@ -173,6 +173,48 @@ QNetworkReply *http_client::get(http_request *request, bool redirect /*= true*/)
 		break;
 	}
 
-	return reply;
+    return reply;
+}
+
+QNetworkReply *http_client::customRequest(http_request *request, QString &verb, bool redirect)
+{
+    QNetworkReply *reply = 0;
+
+    while (true){
+
+        QNetworkRequest& req = *request->request();
+        http_request_body *body = request->body();
+
+        switch (body->type())
+        {
+        case http_request_body::REQUEST_BODY_TYPE_DATA:
+            reply = _am->sendCustomRequest(req, verb.toLocal8Bit(), body->data());
+            break;
+        case http_request_body::REQUEST_BODY_TYPE_MULTI_PART:
+            reply = _am->sendCustomRequest(req, verb.toLocal8Bit(), body->multi_part());
+            break;
+        default:
+            break;
+        }
+
+        QEventLoop loop;
+        connect(reply, &QNetworkReply::downloadProgress, this, &http_client::downloadProgress);
+        connect(reply, &QNetworkReply::uploadProgress, this, &http_client::uploadProgress);
+        connect(reply, &QNetworkReply::finished, this, &http_client::finished);
+        connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (redirect &&
+            reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 302){
+            req.setUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
+            reply->close();
+            reply->deleteLater();
+            continue;
+        }
+
+        break;
+    }
+
+    return reply;
 }
 

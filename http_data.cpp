@@ -26,6 +26,16 @@ void http_data::set_key(const QString& key)
 	_key = key;
 }
 
+bool http_data::used() const
+{
+    return _used;
+}
+
+void http_data::set_used(bool used)
+{
+    _used = used;
+}
+
 http_data::post_type_t http_data::post_type() const
 {
 	return _post_type;
@@ -146,12 +156,13 @@ QString http_data_list::to_url_encode_string(int post_type,
 	return temp_items.to_url_encode_string();
 }
 
-http_data_list http_data_list::get_post_datas(int post_type, int auth_type) const
+http_data_list http_data_list::get_post_datas(int post_type, int auth_type, bool only_used) const
 {
 	http_data_list temp_items;
 	for (auto it = begin(); it != end(); it++){
 		http_data_ptr pdi = *it;
-		if (pdi->post_type() & post_type
+        if (pdi->post_type() & post_type
+            && (only_used ? pdi->used() : true)
 			&& (auth_type == http_data::HTTP_DATA_AUTH_ALL
 			|| auth_type == http_data::HTTP_DATA_AUTH && pdi->auth()
 			|| auth_type == http_data::HTTP_DATA_NOT_AUTH && !pdi->auth())){
@@ -229,6 +240,16 @@ QString http_form_data::name() const
 void http_form_data::set_name(const QString& name)
 {
 	_name = name;
+}
+
+bool http_form_data::used() const
+{
+    return _used;
+}
+
+void http_form_data::set_used(bool used)
+{
+    _used = used;
 }
 
 QString http_form_data::content_type() const

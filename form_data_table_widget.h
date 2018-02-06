@@ -12,9 +12,10 @@ public:
 
 	enum form_data_column_index_t{
 		FORM_DATA_COLUMN_NAME = 0,
-		FORM_DATA_COLUMN_CONTENT_TYPE = 1,
-		FORM_DATA_COLUMN_VALUE = 2,
-		FORM_DATA_COLUMN_COUNT = 3
+        FORM_DATA_COLUMN_USED = 1,
+        FORM_DATA_COLUMN_CONTENT_TYPE = 2,
+        FORM_DATA_COLUMN_VALUE = 3,
+        FORM_DATA_COLUMN_COUNT = 4
 	};
 
 	form_data_table_widget(QWidget *parent);

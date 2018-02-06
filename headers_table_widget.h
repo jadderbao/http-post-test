@@ -1,9 +1,9 @@
 #ifndef HEADERS_TABLE_WIDGET_H
 #define HEADERS_TABLE_WIDGET_H
 
-#include "url_encode_table_widget.h"
+#include "key_value_table_widget.h"
 
-class headers_table_widget : public url_encode_table_widget
+class headers_table_widget : public key_value_table_widget
 {
 	Q_OBJECT
 

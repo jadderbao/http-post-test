@@ -18,6 +18,7 @@ class QHttpMultiPart;
 class QTableWidget;
 
 class http_script_engine;
+class QUrl;
 
 typedef QMap<QString, QString> key_value_map;
 
@@ -60,6 +61,7 @@ protected:
 	void post_multi_part(QUrl& url);
 public:
 	void update_request_custom_header(const http_data_list& items, QNetworkRequest *request);
+    QUrl get_url();
 
 public:
 	void initialize_script_engine(http_script_engine *engine);
@@ -74,6 +76,7 @@ public slots:
 
 	void post();
 	void get();
+    void send();
 
 	void url_encode_body_insert();
 	void url_encode_body_remove();

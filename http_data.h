@@ -17,6 +17,7 @@
 #define POST_VALUE_TYPE_JAVASCRIPT_STR			"javascript"
 
 #define HTTP_DATA_FIELD_KEY				"key"
+#define HTTP_DATA_FIELD_USED            "used"
 #define HTTP_DATA_FIELD_POST_TYPE		"post_type"
 #define HTTP_DATA_FIELD_AUTH			"auth"
 #define HTTP_DATA_FIELD_VALUE_TYPE		"value_type"
@@ -27,7 +28,8 @@ class http_data : public QObject
 	Q_OBJECT
 
 	Q_PROPERTY(QString key READ key WRITE set_key)
-	Q_PROPERTY(post_type_t post_type READ post_type WRITE set_post_type)
+    Q_PROPERTY(bool used READ used WRITE set_used)
+    Q_PROPERTY(post_type_t post_type READ post_type WRITE set_post_type)
 	Q_PROPERTY(bool auth READ auth WRITE set_auth)
 	Q_PROPERTY(QString value_type READ value_type WRITE set_value_type)
 	Q_PROPERTY(QString value READ value WRITE set_value)
@@ -55,6 +57,9 @@ public:
 	QString key() const;
 	void set_key(const QString& key);
 
+    bool used() const;
+    void set_used(const bool used);
+
 	post_type_t post_type() const;
 	QString post_type_string() const;
 	void set_post_type(post_type_t post_type);
@@ -77,6 +82,7 @@ public:
 
 private:
 	QString _key;
+    bool _used;
 	post_type_t _post_type;
 	bool _auth;
 	QString _value_type;
@@ -95,7 +101,7 @@ public:
 	QString to_url_encode_string(int post_type,
 		int auth_type = http_data::HTTP_DATA_AUTH_ALL) const;
 	http_data_list get_post_datas(int post_type = http_data::POST_TYPE_ALL,
-		int auth_type = http_data::HTTP_DATA_AUTH_ALL) const;
+        int auth_type = http_data::HTTP_DATA_AUTH_ALL, bool only_used = true) const;
 	QJsonValue to_json();
 	void append_from_json(const QJsonValue& v);
 public:
@@ -106,6 +112,7 @@ private:
 
 
 #define HTTP_FORM_DATA_FIELD_NAME			"name"
+#define HTTP_FORM_DATA_FIELD_USED           "used"
 #define HTTP_FORM_DATA_FIELD_CONTENT_TYPE	"content_type"
 #define HTTP_FORM_DATA_FIELD_VALUE			"value"
 
@@ -125,6 +132,9 @@ public:
 	QString name() const;
 	void set_name(const QString& name);
 
+    bool used() const;
+    void set_used(const bool used);
+
 	QString content_type() const;
 	void set_content_type(const QString& content_type);
 
@@ -136,6 +146,7 @@ public:
 
 private:
 	QString _name;
+    bool _used;
 	QString _content_type;
 	QString _value;
 	QVariant _data;

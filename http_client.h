@@ -74,6 +74,7 @@ public:
 	~http_client();
 	QNetworkReply *post(http_request *request, bool redirect = true);
 	QNetworkReply *get(http_request *request, bool redirect = true);
+    QNetworkReply *customRequest(http_request *request, QString& verb, bool redirect = true);
 	QByteArray get_reply_data(QNetworkReply *reply);
 private:
 	QNetworkAccessManager *_am;
