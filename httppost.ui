@@ -142,7 +142,7 @@
       </property>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabHeader">
         <attribute name="title">
@@ -150,7 +150,7 @@
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="headers_table_widget" name="tableWidgetHeaders">
+          <widget class="key_value_table_widget" name="tableWidgetHeaders">
            <property name="styleSheet">
             <string notr="true"/>
            </property>
@@ -224,7 +224,7 @@
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="url_encode_table_widget" name="tableWidgetQuery">
+          <widget class="key_value_table_widget" name="tableWidgetQuery">
            <property name="styleSheet">
             <string notr="true"/>
            </property>
@@ -336,7 +336,7 @@
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="url_encode_table_widget" name="tableWidgetUrlEncode">
+              <widget class="key_value_table_widget" name="tableWidgetUrlEncode">
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
@@ -611,14 +611,9 @@
    <header>form_data_table_widget.h</header>
   </customwidget>
   <customwidget>
-   <class>url_encode_table_widget</class>
+   <class>key_value_table_widget</class>
    <extends>QTableWidget</extends>
-   <header>url_encode_table_widget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>headers_table_widget</class>
-   <extends>QTableWidget</extends>
-   <header>headers_table_widget.h</header>
+   <header>key_value_table_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

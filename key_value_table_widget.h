@@ -28,4 +28,4 @@ private:
 	
 };
 
-#endif // URL_ENCODE_TABLE_WIDGET_H
+#endif // KEY_VALUE_TABLE_WIDGET_H
