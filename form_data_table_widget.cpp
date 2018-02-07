@@ -48,8 +48,8 @@ http_form_data_list form_data_table_widget::data()
 		data_ptr->set_name(name);
 
         QTableWidgetItem *used_item = item(row, FORM_DATA_COLUMN_USED);
-        bool used = content_type_item ? used_item->data(0).toBool() : true;
-        data_ptr->set_content_type(used);
+        bool used = used_item ? used_item->data(0).toBool() : true;
+        data_ptr->set_used(used);
 
         QTableWidgetItem *content_type_item = item(row, FORM_DATA_COLUMN_CONTENT_TYPE);
         QString content_type = content_type_item ? content_type_item->data(0).toString() : "Body";

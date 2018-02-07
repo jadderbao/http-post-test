@@ -76,5 +76,16 @@ void table_widget::move_selected_row_down()
 void table_widget::move_selected_row_up()
 {
 	QModelIndex index = currentIndex();
-	move_row_up(index.row());
+    move_row_up(index.row());
+}
+
+void table_widget::insert()
+{
+    int row = rowCount();
+    setRowCount( row + 1);
+}
+
+void table_widget::remove_selected()
+{
+    removeRow(currentIndex().row());
 }

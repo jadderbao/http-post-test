@@ -103,33 +103,16 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonSave_2">
+       <widget class="QPushButton" name="pushButtonSave">
         <property name="text">
          <string>Save</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonLoad_2">
+       <widget class="QPushButton" name="pushButtonLoad">
         <property name="text">
          <string>Load</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonPost">
-        <property name="text">
-         <string>POST</string>
-        </property>
-        <property name="autoRepeat">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonGet">
-        <property name="text">
-         <string>GET</string>
         </property>
        </widget>
       </item>
@@ -142,7 +125,7 @@
       </property>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabHeader">
         <attribute name="title">
@@ -248,21 +231,21 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="pushButtonInsert_2">
+            <widget class="QPushButton" name="pushButtonQueryInsert">
              <property name="text">
               <string>Insert</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonUrlEncodeDown_2">
+            <widget class="QPushButton" name="pushButtonQueryDown">
              <property name="text">
               <string>Down</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonUrlEncodeUp_2">
+            <widget class="QPushButton" name="pushButtonQueryUp">
              <property name="text">
               <string>Up</string>
              </property>
@@ -289,7 +272,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonRemove_2">
+            <widget class="QPushButton" name="pushButtonQueryRemove">
              <property name="text">
               <string>Remove</string>
              </property>
@@ -547,6 +530,11 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tabScript">
+        <attribute name="title">
+         <string>Script</string>
+        </attribute>
+       </widget>
       </widget>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -560,7 +548,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidgetResponse">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tabResponseBody">
            <attribute name="title">

@@ -13,8 +13,12 @@ public:
 	bool swap_row(int src_row, int dest_row);
 	bool move_row_down(int row);
 	bool move_row_up(int row);
+
+public slots:
 	void move_selected_row_down();
 	void move_selected_row_up();
+    void insert();
+    void remove_selected();
 
 private:
 	

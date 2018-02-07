@@ -19,6 +19,8 @@ class QTableWidget;
 
 class http_script_engine;
 class QUrl;
+class http_request;
+class QJsonObject;
 
 typedef QMap<QString, QString> key_value_map;
 
@@ -32,8 +34,8 @@ public:
 	void show_reply(QNetworkReply * reply);
 	QString get_url_encode_body();
 
-	void load_url_encode_post_data(const QString& file_name);
-	void save_url_encode_post_data(const QString& file_name);
+    void set_ui_data(QJsonObject& v);
+    QJsonObject get_ui_data();
 	QByteArray url_encode(const QString &key);
 	QJsonValue form_data_table_to_json(QTableWidget *tableWidget);
 	void form_data_json_to_table(QJsonValue &v, QTableWidget *tableWidget);
@@ -62,14 +64,12 @@ protected:
 public:
 	void update_request_custom_header(const http_data_list& items, QNetworkRequest *request);
     QUrl get_url();
+    void update_request_body(http_request* request);
 
 public:
 	void initialize_script_engine(http_script_engine *engine);
 
 public slots:
-	void move_row_up();
-	void move_row_down();
-
 	void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 	void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 	void finished();
@@ -78,32 +78,13 @@ public slots:
 	void get();
     void send();
 
-	void url_encode_body_insert();
-	void url_encode_body_remove();
-	void url_encode_body_save();
-	void url_encode_body_load();
+    void load();
+    void save();
+    void save_as();
 
 	void form_add_text();
 	void form_add_image();
 	void form_add_raw();
-
-	void form_insert();
-	void form_remove();
-
-	void form_save();
-	void form_load();
-
-	void json_save();
-	void json_load();
-
-	void text_save();
-	void text_load();
-
-	void header_insert();
-	void header_remove();
-
-	void header_save();
-	void header_load();
 
 public:
 	QString get_open_file_name(const QString& filter);

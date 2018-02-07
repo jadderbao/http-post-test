@@ -3,6 +3,7 @@
 
 key_value_table_widget::key_value_table_widget(QWidget *parent)
 	: table_widget(parent)
+    , _post_type()
 {
 }
 
@@ -18,9 +19,14 @@ void key_value_table_widget::set_default_column_size()
     setColumnWidth(URL_ENCODE_COLUMN_VALUE, 300);
 }
 
+void key_value_table_widget::set_post_type(http_data::post_type_t post_type)
+{
+    _post_type = post_type;
+}
+
 void key_value_table_widget::showEvent(QShowEvent *event)
 {
-	set_default_column_size();
+    set_default_column_size();
 }
 
 void key_value_table_widget::set_data(const http_data_list& datas)
@@ -51,6 +57,8 @@ http_data_list key_value_table_widget::data()
 		QTableWidgetItem *value_item = item(row, URL_ENCODE_COLUMN_VALUE);
 		QString value = value_item ? value_item->data(0).toString() : "";
 		data_ptr->set_value(value);
+
+        data_ptr->set_post_type(_post_type);
 
 		datas.append(data_ptr);
 	}

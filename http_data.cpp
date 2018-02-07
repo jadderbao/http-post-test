@@ -133,8 +133,12 @@ QByteArray http_data_list::url_encode(const QString &data)
 QString http_data_list::to_url_encode_string() const
 {
 	QString str;
-	for (auto it = begin(); it != end(); it++){
+    for (auto it = begin(); it != end(); it++){
 		http_data_ptr pdi = *it;
+        if(!pdi->used()){
+            continue;
+        }
+
 		str.append(url_encode(pdi->key()));
 		str.append("=");
 
@@ -181,6 +185,7 @@ QJsonValue http_data_list::to_json()
 		const http_data_ptr& data_ptr = at(i);
 		QJsonObject obj;
 		obj[HTTP_DATA_FIELD_KEY] = data_ptr->key();
+        obj[HTTP_DATA_FIELD_USED] = data_ptr->used();
 		obj[HTTP_DATA_FIELD_POST_TYPE] = data_ptr->post_type();
 		obj[HTTP_DATA_FIELD_AUTH] = data_ptr->auth();
 		obj[HTTP_DATA_FIELD_VALUE_TYPE] = data_ptr->value_type();
@@ -209,6 +214,7 @@ http_data_list http_data_list::from_json(const QJsonValue& v)
 		http_data_ptr data_ptr(http_data_ptr::create());
 		QJsonObject obj = arr[i].toObject();
 		data_ptr->set_key(obj[HTTP_DATA_FIELD_KEY].toString());
+        data_ptr->set_used(obj[HTTP_DATA_FIELD_USED].toBool());
 		data_ptr->set_post_type((http_data::post_type_t)obj[HTTP_DATA_FIELD_POST_TYPE].toInt());
 		data_ptr->set_auth(obj[HTTP_DATA_FIELD_AUTH].toBool());
 		data_ptr->set_value_type(obj[HTTP_DATA_FIELD_VALUE_TYPE].toString());
@@ -291,6 +297,7 @@ QJsonValue http_form_data_list::to_json()
 		const http_form_data_ptr& data_ptr = at(i);
 		QJsonObject obj;
 		obj[HTTP_FORM_DATA_FIELD_NAME] = data_ptr->name();
+        obj[HTTP_FORM_DATA_FIELD_USED] = data_ptr->used();
 		obj[HTTP_FORM_DATA_FIELD_CONTENT_TYPE] = data_ptr->content_type();
 		obj[HTTP_DATA_FIELD_VALUE] = data_ptr->value();
 		arr.append(obj);
@@ -317,6 +324,7 @@ http_form_data_list http_form_data_list::from_json(const QJsonValue& v)
 		http_form_data_ptr data_ptr(http_form_data_ptr::create());
 		QJsonObject obj = arr[i].toObject();
 		data_ptr->set_name(obj[HTTP_FORM_DATA_FIELD_NAME].toString());
+        data_ptr->set_used(obj[HTTP_FORM_DATA_FIELD_USED].toBool());
 		data_ptr->set_content_type(obj[HTTP_FORM_DATA_FIELD_CONTENT_TYPE].toString());
 		data_ptr->set_value(obj[HTTP_DATA_FIELD_VALUE].toString());
 

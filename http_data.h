@@ -121,6 +121,7 @@ class http_form_data : public QObject
 	Q_OBJECT
 
 	Q_PROPERTY(QString name READ name WRITE set_name)
+    Q_PROPERTY(bool used READ used WRITE set_used)
 	Q_PROPERTY(QString content_type READ content_type WRITE set_content_type)
 	Q_PROPERTY(QString value READ value WRITE set_value)
 	Q_PROPERTY(QVariant data READ data WRITE set_data)

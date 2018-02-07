@@ -19,12 +19,14 @@ public:
     key_value_table_widget(QWidget *parent);
     ~key_value_table_widget();
 	void set_default_column_size();
+    void set_post_type(http_data::post_type_t post_type);
 	void set_data(const http_data_list& v);
 	http_data_list data();
 protected:
 	void showEvent(QShowEvent *event);
 
 private:
+    http_data::post_type_t _post_type;
 	
 };
 
