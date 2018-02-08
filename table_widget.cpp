@@ -70,22 +70,33 @@ void table_widget::move_selected_row_down()
 {
 	QModelIndex index = currentIndex();
 	if (move_row_down(index.row())){
+        QModelIndex down = index.sibling(index.row() + 1, index.column());
+        setCurrentIndex(down);
 	}
 }
 
 void table_widget::move_selected_row_up()
 {
 	QModelIndex index = currentIndex();
-    move_row_up(index.row());
+    if(move_row_up(index.row())){
+        QModelIndex up = index.sibling(index.row() - 1, index.column());
+        setCurrentIndex(up);
+    }
 }
 
 void table_widget::insert()
 {
-    int row = rowCount();
-    setRowCount( row + 1);
+    QModelIndex index = currentIndex();
+    int row = index.isValid() ? index.row() + 1 : rowCount() + 1;
+    insertRow(row);
+    setCurrentCell(row, 0);
 }
 
 void table_widget::remove_selected()
 {
-    removeRow(currentIndex().row());
+    int row = currentIndex().row();
+    removeRow(row);
+    if(row > 0){
+        setCurrentCell(row - 1, 0);
+    }
 }

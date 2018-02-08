@@ -74,6 +74,8 @@ public slots:
 	void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 	void finished();
 
+    void content_type_button_clicked(bool checked);
+
 	void post();
 	void get();
     void send();

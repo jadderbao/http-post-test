@@ -17,7 +17,7 @@ public:
 public slots:
 	void move_selected_row_down();
 	void move_selected_row_up();
-    void insert();
+    virtual void insert();
     void remove_selected();
 
 private:

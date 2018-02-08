@@ -164,16 +164,16 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonHeadersDown">
+            <widget class="QPushButton" name="pushButtonHeadersUp">
              <property name="text">
-              <string>Down</string>
+              <string>Up</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonHeadersUp">
+            <widget class="QPushButton" name="pushButtonHeadersDown">
              <property name="text">
-              <string>Up</string>
+              <string>Down</string>
              </property>
             </widget>
            </item>
@@ -238,16 +238,16 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonQueryDown">
+            <widget class="QPushButton" name="pushButtonQueryUp">
              <property name="text">
-              <string>Down</string>
+              <string>Up</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonQueryUp">
+            <widget class="QPushButton" name="pushButtonQueryDown">
              <property name="text">
-              <string>Up</string>
+              <string>Down</string>
              </property>
             </widget>
            </item>
@@ -283,41 +283,118 @@
         </layout>
        </widget>
        <widget class="QWidget" name="tabBody">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <attribute name="title">
          <string>Body</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QRadioButton" name="radioButtonUrlEncoded">
+             <property name="text">
+              <string>x-www-form-urlencoded</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButtonFormData">
+             <property name="text">
+              <string>multipart/form-data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButtonJson">
+             <property name="text">
+              <string>application/json</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButtonCustom">
+             <property name="text">
+              <string>Custom</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxCustom">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>1</height>
+              </size>
+             </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>video/mpeg4</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>audio/rn-mpeg</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
          <item>
           <widget class="QTabWidget" name="tabWidgetPostBody">
-           <property name="tabShape">
-            <enum>QTabWidget::Rounded</enum>
+           <property name="tabletTracking">
+            <bool>false</bool>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
            </property>
            <property name="currentIndex">
             <number>0</number>
            </property>
-           <property name="elideMode">
-            <enum>Qt::ElideMiddle</enum>
-           </property>
-           <widget class="QWidget" name="tabPostKeyValue">
+           <widget class="QWidget" name="tabWidgetPostBodyPageUrlEncode">
             <attribute name="title">
-             <string>x-www-form-urlencoded</string>
+             <string/>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="key_value_table_widget" name="tableWidgetUrlEncode">
                <property name="styleSheet">
@@ -342,6 +419,9 @@
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_6">
+               <property name="spacing">
+                <number>2</number>
+               </property>
                <item>
                 <widget class="QPushButton" name="pushButtonInsert">
                  <property name="text">
@@ -350,16 +430,16 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonUrlEncodeDown">
+                <widget class="QPushButton" name="pushButtonUrlEncodeUp">
                  <property name="text">
-                  <string>Down</string>
+                  <string>Up</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonUrlEncodeUp">
+                <widget class="QPushButton" name="pushButtonUrlEncodeDown">
                  <property name="text">
-                  <string>Up</string>
+                  <string>Down</string>
                  </property>
                 </widget>
                </item>
@@ -394,11 +474,26 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="tabFormData">
+           <widget class="QWidget" name="tabWidgetPostBodyPageFormData">
             <attribute name="title">
-             <string>multipart/form-data</string>
+             <string/>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="form_data_table_widget" name="tableWidgetFormData">
                <column>
@@ -425,6 +520,9 @@
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="spacing">
+                <number>6</number>
+               </property>
                <item>
                 <widget class="QPushButton" name="pushButtonFormInsert">
                  <property name="enabled">
@@ -436,16 +534,16 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonFormDataDown">
+                <widget class="QPushButton" name="pushButtonFormDataUp">
                  <property name="text">
-                  <string>Down</string>
+                  <string>Up</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonFormDataUp">
+                <widget class="QPushButton" name="pushButtonFormDataDown">
                  <property name="text">
-                  <string>Up</string>
+                  <string>Down</string>
                  </property>
                 </widget>
                </item>
@@ -506,19 +604,31 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="tabJson">
+           <widget class="QWidget" name="tabWidgetPostBodyPageJson">
             <attribute name="title">
-             <string>application/json</string>
+             <string/>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QPlainTextEdit" name="plainTextEditJson"/>
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="tabTextXml">
+           <widget class="QWidget" name="tabWidgetPostBodyPageCustom">
             <attribute name="title">
-             <string>text/xml</string>
+             <string/>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>

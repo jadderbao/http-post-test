@@ -20,7 +20,18 @@ void form_data_table_widget::set_default_column_size()
 
 void form_data_table_widget::showEvent(QShowEvent *event)
 {
-	set_default_column_size();
+    set_default_column_size();
+}
+
+void form_data_table_widget::insert()
+{
+    table_widget::insert();
+    int row = currentRow();
+    if(row < 0){
+        return;
+    }
+
+    setItem(row, FORM_DATA_COLUMN_USED, new QTableWidgetItem("true"));
 }
 
 void form_data_table_widget::set_data(const http_form_data_list& datas)
@@ -30,11 +41,10 @@ void form_data_table_widget::set_data(const http_form_data_list& datas)
 		http_form_data_ptr data_ptr = datas[i];
 
 		setItem(i, FORM_DATA_COLUMN_NAME, new QTableWidgetItem(data_ptr->name()));
-        setItem(i, FORM_DATA_COLUMN_USED, new QTableWidgetItem(data_ptr->used()));
+        setItem(i, FORM_DATA_COLUMN_USED, new QTableWidgetItem(data_ptr->used() ? "true" : "false"));
         setItem(i, FORM_DATA_COLUMN_CONTENT_TYPE, new QTableWidgetItem(data_ptr->content_type()));
         setItem(i, FORM_DATA_COLUMN_VALUE, new QTableWidgetItem(data_ptr->value()));
 	}
-
 }
 
 http_form_data_list form_data_table_widget::data()

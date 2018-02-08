@@ -25,6 +25,8 @@ public:
 	http_form_data_list data();
 protected:
 	void showEvent(QShowEvent *event);
+public:
+    void insert();
 
 private:
 	

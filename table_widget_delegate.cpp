@@ -178,7 +178,12 @@ void table_widget_delegate::setWidgetData(const QModelIndex &index, QWidget *edi
 	switch (cd->type)
 	{
 	case WIDGET_CHECKBOX:
-		QStyledItemDelegate::setEditorData(editor, index);
+        {
+            QCheckBox *widget = qobject_cast<QCheckBox*>(editor);
+            if(widget){
+                widget->setChecked(data.toBool());
+            }
+        }
 		break;
 	case  WIDGET_COMBOBOX:
 		{
@@ -224,7 +229,12 @@ void table_widget_delegate::setWidgetModelData(const QModelIndex &index, QAbstra
 	switch (cd->type)
 	{
 	case WIDGET_CHECKBOX:
-		QStyledItemDelegate::setModelData(editor, model, index);
+        {
+            QCheckBox *widget = qobject_cast<QCheckBox*>(editor);
+            if(widget){
+                model->setData(index, widget->checkState() == Qt::Checked);
+            }
+        }
 		break;
 	case  WIDGET_COMBOBOX:
 		{
