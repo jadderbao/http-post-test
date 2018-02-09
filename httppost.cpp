@@ -51,6 +51,12 @@ httppost::httppost(QWidget *parent)
     connect(ui.radioButtonJson, &QRadioButton::clicked, this, &httppost::content_type_button_clicked);
     connect(ui.radioButtonCustom, &QRadioButton::clicked, this, &httppost::content_type_button_clicked);
 
+    connect(ui.pushButtonCustomOpenFile, &QPushButton::clicked, this, &httppost::custom_open_file);
+
+
+    connect(ui.radioButtonCustomFiles, &QRadioButton::clicked, this, &httppost::custom_type_button_clicked);
+    connect(ui.radioButtonCustomTexts, &QRadioButton::clicked, this, &httppost::custom_type_button_clicked);
+
     connect(ui.pushButtonHeadersUp, &QPushButton::clicked, ui.tableWidgetHeaders, &table_widget::move_selected_row_up);
     connect(ui.pushButtonHeadersDown, &QPushButton::clicked, ui.tableWidgetHeaders, &table_widget::move_selected_row_down);
     connect(ui.pushButtonQueryUp, &QPushButton::clicked, ui.tableWidgetQuery, &table_widget::move_selected_row_up);
@@ -82,6 +88,8 @@ httppost::httppost(QWidget *parent)
     ui.tabWidgetPostBody->tabBar()->hide();
     ui.checkBoxAutoUCenterAuthentication->hide();
 
+    ui.tabWidgetCustom->tabBar()->hide();
+
 	progress_bar = new QProgressBar;
 	progress_bar->setVisible(false);
 	progress_bar->setMaximum(0);
@@ -90,11 +98,13 @@ httppost::httppost(QWidget *parent)
 	ui.tabWidgetPostBody->setCurrentIndex(0);
     ui.statusBar->showMessage("Jadder Http 测试工具 V 0.5.0 build 2016.3.5 e-mail: JadderBao@163.com");
 
+    load_form_status();
+
     QString default_file_name = DEFAULT_FILE_NAME;
     QJsonObject v = load_json_file(default_file_name);
     set_ui_data(v);
 
-    load_form_status();
+
 }
 
 httppost::~httppost()
@@ -105,21 +115,40 @@ httppost::~httppost()
     save_form_status();
 }
 
-void httppost::save_form_status()
+QString httppost::get_combobox_items(QComboBox *comboBox)
 {
-    QJsonObject v;
-
     QString content_types;
-    for(int i=0; i< ui.comboBoxCustom->count(); i++){
-        content_types.append(ui.comboBoxCustom->itemText(i));
-        if(i < ui.comboBoxCustom->count() - 1){
+    for(int i=0; i< comboBox->count(); i++){
+        content_types.append(comboBox->itemText(i));
+        if(i < comboBox->count() - 1){
             content_types.append(',');
         }
     }
 
-    v["custom_content_type"] = content_types;
+    return content_types;
+}
+
+void httppost::save_form_status()
+{
+    QJsonObject v;
+
+    v["tab_widget_index"] = ui.tabWidget->currentIndex();
+    v["custom_type"] = ui.radioButtonCustomFiles->isChecked() ? 1 : 2;
+    v["custom_content_type"] =  get_combobox_items(ui.comboBoxCustomContentTypes);
+    v["custom_files"] = get_combobox_items(ui.comboBoxCustomFiles);
 
     save_json_file(FORM_STATUS_FILE_NAME, v);
+}
+
+void httppost::update_custom_type_ui(int custom_type)
+{
+    if(custom_type == 1){
+        ui.radioButtonCustomFiles->setChecked(true);
+        ui.tabWidgetCustom->setCurrentWidget(ui.tabCustomFiles);
+    } else if(custom_type == 2) {
+        ui.radioButtonCustomTexts->setChecked(true);
+        ui.tabWidgetCustom->setCurrentWidget(ui.tabCustomTexts);
+    }
 }
 
 void httppost::load_form_status()
@@ -129,9 +158,20 @@ void httppost::load_form_status()
         return;
     }
 
-    QStringList content_types = v["custom_content_type"].toString().split(',');
-    ui.comboBoxCustom->clear();
-    ui.comboBoxCustom->addItems(content_types);
+    ui.tabWidget->setCurrentIndex(v["tab_widget_index"].toInt());
+
+    int custom_type = v["custom_type"].toInt();
+    update_custom_type_ui(custom_type);
+
+    QStringList custom_content_types = v["custom_content_type"].toString().split(',');
+    ui.comboBoxCustomContentTypes->clear();
+    ui.comboBoxCustomContentTypes->addItems(custom_content_types);
+
+    QStringList custom_files = v["custom_files"].toString().split(",");
+    ui.comboBoxCustomFiles->clear();
+    ui.comboBoxCustomFiles->addItems(custom_files);
+
+
 }
 
 void httppost::set_table_widgets()
@@ -228,8 +268,29 @@ void httppost::content_type_button_clicked(bool checked)
         ui.tabWidgetPostBody->setCurrentWidget(ui.tabWidgetPostBodyPageCustom);
     }
 
-    ui.comboBoxCustom->setEnabled(ui.radioButtonCustom->isChecked());
+    ui.comboBoxCustomContentTypes->setEnabled(ui.radioButtonCustom->isChecked());
 
+}
+
+void httppost::custom_type_button_clicked(bool checked)
+{
+    Q_UNUSED(checked)
+
+    if(ui.radioButtonCustomFiles->isChecked()){
+       ui.tabWidgetCustom->setCurrentWidget(ui.tabCustomFiles);
+    }else if(ui.radioButtonCustomTexts->isChecked()){
+        ui.tabWidgetCustom->setCurrentWidget(ui.tabCustomTexts);
+    }
+}
+
+void httppost::custom_open_file()
+{
+    QString file_name = get_open_file_name("*.*(*.*)");
+    if(file_name.isEmpty()){
+        return;
+    }
+
+    ui.comboBoxCustomFiles->setCurrentText(file_name);
 }
 
 QUrl httppost::get_url()
@@ -244,7 +305,7 @@ QUrl httppost::get_url()
     return url;
 }
 
-void httppost::update_request_body(http_request *request)
+bool httppost::update_request_body(http_request *request)
 {
     http_request_body *body = 0;
     QString content_type;
@@ -267,9 +328,28 @@ void httppost::update_request_body(http_request *request)
         body = new http_request_body(ui.plainTextEditJson->toPlainText().toUtf8());
         content_type =  "application/json";
         break;
-    case 3: //text/xml
-        body = new http_request_body(ui.plainTextEditText->toPlainText().toUtf8());
-        content_type =  ui.comboBoxCustom->currentText();
+    case 3: //custom
+        if(ui.radioButtonCustomFiles->isChecked()){
+            QString file_name = ui.comboBoxCustomFiles->currentText();
+            QFile *file = new QFile(file_name);
+            if(!file->open(QIODevice::ReadOnly)){
+                QMessageBox::critical(this, "文件打开错误", file->errorString(), QMessageBox::Ok);
+                delete file;
+                return false;
+            }
+
+            if(ui.comboBoxCustomFiles->findText(file_name) == -1){
+                ui.comboBoxCustomFiles->addItem(file_name);
+            }
+
+            body = new http_request_body(file);
+        }else{
+            body = new http_request_body(ui.plainTextEditCustomText->toPlainText().toUtf8());
+        }
+        content_type =  ui.comboBoxCustomContentTypes->currentText();
+        if(ui.comboBoxCustomContentTypes->findText(content_type) == -1){
+            ui.comboBoxCustomContentTypes->addItem(content_type);
+        }
         break;
     default:
         break;
@@ -279,6 +359,8 @@ void httppost::update_request_body(http_request *request)
     if(!content_type.isEmpty()){
         request->request()->setHeader(QNetworkRequest::ContentTypeHeader, content_type);
     }
+
+    return true;
 }
 
 void httppost::send()
@@ -309,12 +391,16 @@ void httppost::send()
     if(verb_upper == "GET"){
         reply = client->get(request.data());
     }else if(verb == "POST"){
-        update_request_body(request.data());
+        if(!update_request_body(request.data())){
+            return;
+        }
         reply = client->post(request.data());
     }else if(verb == "HEADER"){
         reply = client->customRequest(request.data(), verb);
     }else{
-        update_request_body(request.data());
+        if(!update_request_body(request.data())){
+            return;
+        }
         reply = client->customRequest(request.data(), verb);
     }
 
@@ -334,7 +420,24 @@ void httppost::set_ui_data(QJsonObject &v)
     ui.tableWidgetUrlEncode->set_data(http_data_list::from_json(body["form_urlencoded"]));
     ui.tableWidgetFormData->set_data(http_form_data_list::from_json(body["multipart_form_data"]));
     ui.plainTextEditJson->setPlainText(body["application_json"].toString());
-    ui.plainTextEditText->setPlainText(body["text_html"].toString());
+
+
+    ui.comboBoxCustomFiles->setCurrentText(body["custom_file"].toString());
+    ui.plainTextEditCustomText->setPlainText(body["custom_text"].toString());
+    ui.comboBoxCustomContentTypes->setCurrentText(body["custom_content_type"].toString());
+    int custom_type = body["custom_type"].toInt();
+    update_custom_type_ui(custom_type);
+
+    int body_page_index = body["body_content_index"].toInt();
+    ui.tabWidgetPostBody->setCurrentIndex(body_page_index);
+
+    const int content_radio_button_size = 4;
+    QRadioButton* content_radio_buttons[content_radio_button_size] = {ui.radioButtonUrlEncoded, ui.radioButtonFormData
+                                           , ui.radioButtonJson, ui.radioButtonCustom};
+    if(body_page_index >= 0 && body_page_index < 4){
+        content_radio_buttons[body_page_index]->setChecked(true);
+    }
+
 }
 
 QJsonObject httppost::get_ui_data()
@@ -348,10 +451,15 @@ QJsonObject httppost::get_ui_data()
     v["query"] = ui.tableWidgetQuery->data().to_json();
 
     QJsonObject body;
+    body["body_content_index"] = ui.tabWidgetPostBody->currentIndex();
     body["form_urlencoded"] =ui.tableWidgetUrlEncode->data().to_json();
     body["multipart_form_data"] =ui.tableWidgetFormData->data().to_json();
     body["application_json"] =ui.plainTextEditJson->toPlainText();
-    body["text_html"] =ui.plainTextEditText->toPlainText();
+
+    body["custom_type"] = ui.radioButtonCustomFiles->isChecked() ? 1 : 2; //1. file  2. text
+    body["custom_text"] =ui.plainTextEditCustomText->toPlainText();
+    body["custom_file"] =ui.comboBoxCustomFiles->currentText();
+    body["custom_content_type"] = ui.comboBoxCustomContentTypes->currentText();
 
     v["body"] = body;
 

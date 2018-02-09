@@ -8,6 +8,7 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class QNetworkRequest;
 class QHttpMultiPart;
+class QIODevice;
 
 class http_request_body
 {
@@ -16,28 +17,34 @@ public:
 		REQUEST_BODY_TYPE_NONE,
 		REQUEST_BODY_TYPE_DATA,
 		REQUEST_BODY_TYPE_MULTI_PART,
+        REQUEST_BODY_TYPE_IO_DEVICE
 	};
 
 	union request_body_data_t{
 		request_body_data_t(QByteArray *d)
-		:data(d)
+            :data(d)
 		{}
 
 		request_body_data_t(QHttpMultiPart *m)
-			:multi_part(m)
+            :multi_part(m)
 		{}
 
+        request_body_data_t(QIODevice *io_device)
+            :io_device(io_device)
+        {}
 		QByteArray *data;
 		QHttpMultiPart *multi_part;
+        QIODevice *io_device;
 	};
 
 	http_request_body(const QByteArray& data);
 	http_request_body(QHttpMultiPart *multi_part);
-	~http_request_body();
+    http_request_body(QIODevice *io_device);
+    ~http_request_body();
 	request_body_type_t type();
 	const QByteArray data() const;
 	QHttpMultiPart *multi_part();
-
+    QIODevice *io_device();
 private:
 	request_body_type_t _body_type;
 	request_body_data_t _body_data;
@@ -76,6 +83,8 @@ public:
 	QNetworkReply *get(http_request *request, bool redirect = true);
     QNetworkReply *customRequest(http_request *request, QString& verb, bool redirect = true);
 	QByteArray get_reply_data(QNetworkReply *reply);
+    bool process_and_check_redirect(bool redirect, QNetworkReply *reply, QNetworkRequest& req);
+        
 private:
 	QNetworkAccessManager *_am;
 };

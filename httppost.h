@@ -56,7 +56,8 @@ protected:
 public:
 	void update_request_custom_header(const http_data_list& items, QNetworkRequest *request);
     QUrl get_url();
-    void update_request_body(http_request* request);
+    bool update_request_body(http_request* request);
+    QString get_combobox_items(QComboBox *comboBox);
 
 public:
     void save_form_status();
@@ -71,6 +72,9 @@ public slots:
 	void finished();
 
     void content_type_button_clicked(bool checked);
+    void custom_type_button_clicked(bool checked);
+
+    void custom_open_file();
 
     void send();
 
@@ -89,6 +93,8 @@ public:
 	void save_text_file(const QString& filter, const QByteArray& data);
 	QJsonObject load_json_file(const QString& file_name);
 	void save_json_file(const QString& file_name, const QJsonObject& v);
+
+    void update_custom_type_ui(int custom_type);
 
 private:
 	Ui::httppostClass ui;
