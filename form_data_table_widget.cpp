@@ -1,4 +1,5 @@
 #include "form_data_table_widget.h"
+#include "table_widget_delegate.h"
 
 form_data_table_widget::form_data_table_widget(QWidget *parent)
 : table_widget(parent)
@@ -33,6 +34,44 @@ void form_data_table_widget::insert()
 
     setItem(row, FORM_DATA_COLUMN_USED, new QTableWidgetItem("true"));
 }
+
+void form_data_table_widget::setItemDelegate(QAbstractItemDelegate *delegate)
+{
+    table_widget_delegate *widget_delgate = qobject_cast<table_widget_delegate *>(delegate);
+    if(widget_delgate){
+        connect(widget_delgate, &table_widget_delegate::item_editor, this, &form_data_table_widget::item_editor);
+    }
+
+    table_widget::setItemDelegate(delegate);
+}
+
+
+void form_data_table_widget::item_editor(const QModelIndex &index)
+{
+    if(index.row() != rowCount() -1 ){
+        return;
+    }
+
+    int row = index.row();
+    QTableWidgetItem *used_item = item(row, FORM_DATA_COLUMN_USED);
+    bool used = used_item ? used_item->data(0).toBool() : false;
+    if(!used && index.column() != FORM_DATA_COLUMN_USED){
+       setItem(row, FORM_DATA_COLUMN_USED, new QTableWidgetItem("true"));;
+    }
+
+    QTableWidgetItem *name_item = item(row, FORM_DATA_COLUMN_NAME);
+    QTableWidgetItem *content_type_item = item(row, FORM_DATA_COLUMN_CONTENT_TYPE);
+    QTableWidgetItem *value_item = item(row, FORM_DATA_COLUMN_VALUE);
+    if(( name_item && !name_item->data(0).toString().isEmpty())
+        || ( content_type_item && !content_type_item->data(0).toString().isEmpty())
+        || ( value_item && !value_item->data(0).toString().isEmpty()) ){
+
+        row = rowCount();
+        setRowCount(row + 1);
+        setItem(row, FORM_DATA_COLUMN_USED, new QTableWidgetItem("false"));;
+    }
+}
+
 
 void form_data_table_widget::set_data(const http_form_data_list& datas)
 {

@@ -87,7 +87,7 @@ void table_widget::move_selected_row_up()
 void table_widget::insert()
 {
     QModelIndex index = currentIndex();
-    int row = index.isValid() ? index.row() + 1 : rowCount() + 1;
+    int row = index.isValid() ? index.row() : rowCount();
     insertRow(row);
     setCurrentCell(row, 0);
 }
@@ -97,6 +97,6 @@ void table_widget::remove_selected()
     int row = currentIndex().row();
     removeRow(row);
     if(row > 0){
-        setCurrentCell(row - 1, 0);
+        setCurrentCell(row < rowCount() ? row : row - 1 , 0);
     }
 }

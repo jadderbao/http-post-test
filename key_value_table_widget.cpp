@@ -1,12 +1,12 @@
 #include "key_value_table_widget.h"
 #include "http_data.h"
+#include "table_widget_delegate.h"
 
 key_value_table_widget::key_value_table_widget(QWidget *parent)
 	: table_widget(parent)
     , _post_type()
 {
-    connect(this, &QTableWidget::cellEntered, this, &key_value_table_widget::cellEntered);
-    connect(this, &QTableWidget::itemEntered, this, &key_value_table_widget::itemEntered);
+
 }
 
 key_value_table_widget::~key_value_table_widget()
@@ -42,28 +42,40 @@ void key_value_table_widget::insert()
     setItem(row, KEY_VALUE_COLUMN_USED, new QTableWidgetItem("true"));
 }
 
-void key_value_table_widget::cellEntered(int row, int column)
+void key_value_table_widget::setItemDelegate(QAbstractItemDelegate *delegate)
 {
-    if(row != rowCount() -1 ){
+    table_widget_delegate *widget_delgate = qobject_cast<table_widget_delegate *>(delegate);
+    if(widget_delgate){
+        connect(widget_delgate, &table_widget_delegate::item_editor, this, &key_value_table_widget::item_editor);
+    }
+
+    table_widget::setItemDelegate(delegate);
+}
+
+
+void key_value_table_widget::item_editor(const QModelIndex &index)
+{
+    if(index.row() != rowCount() -1 ){
         return;
     }
+
+    int row = index.row();
+    QTableWidgetItem *used_item = item(row, KEY_VALUE_COLUMN_USED);
+    bool used = used_item ? used_item->data(0).toBool() : false;
+    if(!used && index.column() != KEY_VALUE_COLUMN_USED){
+       setItem(row, KEY_VALUE_COLUMN_USED, new QTableWidgetItem("true"));;
+    }
+
 
     QTableWidgetItem *key_item = item(row, KEY_VALUE_COLUMN_KEY);
     QTableWidgetItem *value_item = item(row, KEY_VALUE_COLUMN_VALUE);
     if(( key_item && !key_item->data(0).toString().isEmpty())
-            || (value_item && !value_item->data(0).toString().isEmpty()) ){
+        || ( value_item && !value_item->data(0).toString().isEmpty()) ){
 
-        insert();
+        row = rowCount();
+        setRowCount(row + 1);
+        setItem(row, KEY_VALUE_COLUMN_USED, new QTableWidgetItem("false"));;
     }
-
-}
-
-void key_value_table_widget::itemEntered(QTableWidgetItem *item)
-{
-    if(item->row() != rowCount() -1 ){
-        return;
-    }
-
 }
 
 void key_value_table_widget::set_data(const http_data_list& datas)

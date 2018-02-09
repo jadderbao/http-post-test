@@ -49,6 +49,9 @@ protected:
 private slots:
 	void commitAndCloseEditor();
 
+Q_SIGNALS:
+    void item_editor(const QModelIndex &index);
+
 private:
 	column_data_map_t _column_datas;
 	QPen _pen;

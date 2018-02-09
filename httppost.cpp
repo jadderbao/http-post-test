@@ -26,6 +26,9 @@
 #include "http_script_engine.h"
 #include "post_data_process.h"
 
+#define DEFAULT_FILE_NAME "default.hpd"
+#define FORM_STATUS_FILE_NAME "formstatus.dat"
+
 httppost::httppost(QWidget *parent)
 	: QMainWindow(parent)
 	, last_file_name("data")
@@ -87,17 +90,49 @@ httppost::httppost(QWidget *parent)
 	ui.tabWidgetPostBody->setCurrentIndex(0);
     ui.statusBar->showMessage("Jadder Http 测试工具 V 0.5.0 build 2016.3.5 e-mail: JadderBao@163.com");
 
-    QString default_file_name = "default.hpd";
+    QString default_file_name = DEFAULT_FILE_NAME;
     QJsonObject v = load_json_file(default_file_name);
     set_ui_data(v);
+
+    load_form_status();
 }
 
 httppost::~httppost()
 {
     QJsonObject v = get_ui_data();
-    save_json_file("default.hpd", v);
+    save_json_file(DEFAULT_FILE_NAME, v);
+
+    save_form_status();
 }
 
+void httppost::save_form_status()
+{
+    QJsonObject v;
+
+    QString content_types;
+    for(int i=0; i< ui.comboBoxCustom->count(); i++){
+        content_types.append(ui.comboBoxCustom->itemText(i));
+        if(i < ui.comboBoxCustom->count() - 1){
+            content_types.append(',');
+        }
+    }
+
+    v["custom_content_type"] = content_types;
+
+    save_json_file(FORM_STATUS_FILE_NAME, v);
+}
+
+void httppost::load_form_status()
+{
+    QJsonObject v = load_json_file(FORM_STATUS_FILE_NAME);
+    if(v.isEmpty()){
+        return;
+    }
+
+    QStringList content_types = v["custom_content_type"].toString().split(',');
+    ui.comboBoxCustom->clear();
+    ui.comboBoxCustom->addItems(content_types);
+}
 
 void httppost::set_table_widgets()
 {
@@ -176,6 +211,8 @@ void httppost::finished()
 
 void httppost::content_type_button_clicked(bool checked)
 {
+    Q_UNUSED(checked)
+
     QRadioButton *button = qobject_cast<QRadioButton *>(sender());
     if(!button){
         return;
@@ -223,7 +260,7 @@ void httppost::update_request_body(http_request *request)
         {
             QHttpMultiPart *multi_part = new QHttpMultiPart();
             form_data_table_to_multi_part(multi_part, ui.tableWidgetFormData);
-            http_request_body *body = new http_request_body(multi_part);
+            body = new http_request_body(multi_part);
         }
         break;
     case 2: //json
@@ -232,7 +269,7 @@ void httppost::update_request_body(http_request *request)
         break;
     case 3: //text/xml
         body = new http_request_body(ui.plainTextEditText->toPlainText().toUtf8());
-        content_type =  "text/xml";
+        content_type =  ui.comboBoxCustom->currentText();
         break;
     default:
         break;
@@ -242,75 +279,6 @@ void httppost::update_request_body(http_request *request)
     if(!content_type.isEmpty()){
         request->request()->setHeader(QNetworkRequest::ContentTypeHeader, content_type);
     }
-}
-
-void httppost::post()
-{
-    QUrl url = get_url();
-	if (!url.isValid()){
-		return;
-	}
-
-	//设置Headers 页面，无法确定Post 类型。
-	if (ui.tabWidgetPostBody->currentIndex() == 4){
-		QMessageBox::warning(this, "无法确定POST类型", "请选择相应的属性页（0-4）, 不要选择“头”页。", QMessageBox::Ok);
-		ui.tabWidgetPostBody->setCurrentIndex(0);
-		return;
-	}
-
-	switch (ui.tabWidgetPostBody->currentIndex()){
-	case 0: // url_encoded
-		post_url_encoded(url);
-		break;
-	case 1:
-		post_multi_part(url);
-		break;
-	case 2: //json
-		post_byte_data(url, ui.plainTextEditJson->toPlainText().toUtf8(), "application/json");
-		break;
-	case 3: //text/xml
-		post_byte_data(url, ui.plainTextEditText->toPlainText().toUtf8(), "text/xml");
-		break;
-	default:
-		break;
-	}
-}
-
-
-void httppost::get()
-{
-
-    QUrl url = get_url();
-    if (!url.isValid()){
-        return;
-    }
-
-	//只有当前项为url_encoded 页时才处理get
-	if (ui.tabWidgetPostBody->currentIndex() != 0){
-		ui.tabWidgetPostBody->setCurrentIndex(0);
-	}
-
-	http_data_list items;
-	if (!get_ui_data_items(items)){
-		return;
-	}
-
-	//原来 url, body 上的参数都一起发送
-	QString body = items.to_url_encode_string(http_data::POST_TYPE_BODY | http_data::POST_TYPE_URL_QUERY);
-	url.setQuery(url.hasQuery() ? url.query() + "&" + body : body);
-
-	QSharedPointer<http_client> client(new http_client(am));
-
-	//
-	QSharedPointer<http_request> request(new http_request(url));
-	update_request_custom_header(items, request->request());
-
-	connect(client.data(), &http_client::downloadProgress, this, &httppost::downloadProgress);
-	connect(client.data(), &http_client::uploadProgress, this, &httppost::uploadProgress);
-	connect(client.data(), &http_client::finished, this, &httppost::finished);
-
-	QNetworkReply *reply = client->get(request.data());
-    show_reply(reply);
 }
 
 void httppost::send()
@@ -482,81 +450,6 @@ bool httppost::process_and_update_item_value(http_data_list& items, QString& err
 		error = process.error_string();
 	}
 	return ok;
-}
-
-void httppost::http_post(QUrl &url, http_request_body * http_body, 
-	const http_data_list &items, const QString& content_type)
-{
-	//添加Url query部分
-	QString url_data = items.to_url_encode_string(http_data::POST_TYPE_URL_QUERY);
-	url.setQuery(url.hasQuery() ? url.query() + "&" + url_data : url_data);
-
-	QSharedPointer<http_client> client(new http_client(am));
-	QSharedPointer<http_request> request(new http_request(url));
-
-	request->set_body(http_body);
-	update_request_custom_header(items.get_post_datas(http_data::POST_TYPE_HEADER), request->request());
-	if (!content_type.isEmpty()){
-		request->request()->setHeader(QNetworkRequest::ContentTypeHeader, content_type);
-	}
-
-	connect(client.data(), &http_client::downloadProgress, this, &httppost::downloadProgress);
-	connect(client.data(), &http_client::uploadProgress, this, &httppost::uploadProgress);
-	connect(client.data(), &http_client::finished, this, &httppost::finished);
-
-	QNetworkReply *reply = client->post(request.data());
-	show_reply(reply);
-}
-
-void httppost::http_post(QUrl &url, QHttpMultiPart *multi_part, const http_data_list &items)
-{
-	http_request_body *http_body = new http_request_body(multi_part);
-	http_post(url, http_body, items);
-}
-
-void httppost::http_post(QUrl &url, const QByteArray &body, 
-	const http_data_list &items, const QString& content_type)
-{
-	http_request_body *http_body = new http_request_body(body);
-	http_post(url, http_body, items, content_type);
-}
-
-void httppost::post_url_encoded(QUrl& url)
-{
-	http_data_list items;
-
-	if (!get_ui_data_items(items)){
-		return;
-	}
-
-	QString body;
-	body = items.to_url_encode_string(http_data::POST_TYPE_BODY);
-	http_post(url, body.toUtf8(), items, "application/x-www-form-urlencoded");
-}
-
-void httppost::post_byte_data(QUrl& url, const QByteArray& data, const QString& content_type)
-{
-	http_data_list items;
-
-	if (!get_ui_data_items(items)){
-		return;
-	}
-
-	http_post(url, data, items, content_type);
-}
-
-void httppost::post_multi_part(QUrl& url)
-{
-	http_data_list items;
-	if (!get_ui_data_items(items)){
-		return;
-	}
-
-	QHttpMultiPart *multi_part = new QHttpMultiPart();
-
-	update_body_to_multi_part(items, multi_part);
-	form_data_table_to_multi_part(multi_part, ui.tableWidgetFormData);
-	http_post(url, multi_part, items);
 }
 
 void httppost::update_body_to_multi_part(const http_data_list &items, QHttpMultiPart * multi_part)

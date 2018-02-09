@@ -373,7 +373,7 @@
             <bool>false</bool>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabWidgetPostBodyPageUrlEncode">
             <attribute name="title">
@@ -423,13 +423,6 @@
                 <number>2</number>
                </property>
                <item>
-                <widget class="QPushButton" name="pushButtonInsert">
-                 <property name="text">
-                  <string>Insert</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QPushButton" name="pushButtonUrlEncodeUp">
                  <property name="text">
                   <string>Up</string>
@@ -440,6 +433,13 @@
                 <widget class="QPushButton" name="pushButtonUrlEncodeDown">
                  <property name="text">
                   <string>Down</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonInsert">
+                 <property name="text">
+                  <string>Insert</string>
                  </property>
                 </widget>
                </item>
@@ -524,16 +524,6 @@
                 <number>6</number>
                </property>
                <item>
-                <widget class="QPushButton" name="pushButtonFormInsert">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Insert</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QPushButton" name="pushButtonFormDataUp">
                  <property name="text">
                   <string>Up</string>
@@ -574,6 +564,16 @@
                  </property>
                  <property name="text">
                   <string>Add Text</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonFormInsert">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Insert</string>
                  </property>
                 </widget>
                </item>

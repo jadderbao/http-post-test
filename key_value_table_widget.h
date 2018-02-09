@@ -26,9 +26,9 @@ protected:
 	void showEvent(QShowEvent *event);
 public:
     void insert();
+    void setItemDelegate(QAbstractItemDelegate *delegate);
 public slots:
-    void cellEntered(int row, int column);
-    void itemEntered(QTableWidgetItem *item);
+    void item_editor(const QModelIndex &index);
 private:
     http_data::post_type_t _post_type;
 	

@@ -264,30 +264,39 @@ void table_widget_delegate::setWidgetModelData(const QModelIndex &index, QAbstra
 bool table_widget_delegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
 	const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    bool handled = false;
 	if (_column_datas.contains(index.column())) {
-		return editorEventWidget(event, model, option, index);
+        handled = editorEventWidget(event, model, option, index);
 	}
 	else {
-		return QStyledItemDelegate::editorEvent(event, model, option, index);
+        handled = QStyledItemDelegate::editorEvent(event, model, option, index);
 	}
+
+    emit item_editor(index);
+
+    return handled;
 }
 
 bool table_widget_delegate::editorEventWidget(QEvent *event, QAbstractItemModel *model,
 	const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    bool handled = false;
 	column_data_ptr cd = _column_datas[index.column()];
 	if (!cd){
-		return QStyledItemDelegate::editorEvent(event, model, option, index);
-	}
+        handled = QStyledItemDelegate::editorEvent(event, model, option, index);
+    }else{
+        switch (cd->type)
+        {
+        case WIDGET_CHECKBOX:
+            handled = editorEventCheckbox(event, model, option, index);
+            break;
+        default:
+            handled = QStyledItemDelegate::editorEvent(event, model, option, index);
+            break;
+        }
+    }
 
-	switch (cd->type)
-	{
-	case WIDGET_CHECKBOX:
-		return editorEventCheckbox(event, model, option, index);
-		break;
-	default:
-		return QStyledItemDelegate::editorEvent(event, model, option, index);
-	}
+    return handled;
 }
 
 bool table_widget_delegate::editorEventCheckbox(QEvent *event, QAbstractItemModel *model,

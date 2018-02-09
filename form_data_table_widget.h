@@ -27,6 +27,9 @@ protected:
 	void showEvent(QShowEvent *event);
 public:
     void insert();
+    void setItemDelegate(QAbstractItemDelegate *delegate);
+public slots:
+    void item_editor(const QModelIndex &index);
 
 private:
 	
