@@ -19,6 +19,7 @@
 #include <QSslSocket> 
 #include <QMap>
 #include <QScriptEngine>
+#include <QMenu>
 
 #include "table_widget_delegate.h"
 #include "http_data.h"
@@ -28,12 +29,14 @@
 
 #define DEFAULT_FILE_NAME "default.hpd"
 #define FORM_STATUS_FILE_NAME "formstatus.dat"
+#define STATUS_FORMAT_STR "Status:<span style=\" font-size:9pt; font-weight:600; color:#0000ff;\">%1 %2</span> Time:<span style=\" font-size:9pt; font-weight:600; color:#0000ff;\">%3 ms</span>"
 
 httppost::httppost(QWidget *parent)
 	: QMainWindow(parent)
-	, last_file_name("data")
+    , last_file_name("")
 {
 	ui.setupUi(this);
+    setWindowTitle("Http 测试");
 	
 	_engine = new http_script_engine(this);
 	initialize_script_engine(_engine);
@@ -42,7 +45,6 @@ httppost::httppost(QWidget *parent)
 	cookie_jar = new QNetworkCookieJar(this);
 	am->setCookieJar(cookie_jar);
 
-    connect(ui.pushButtonLoad, &QPushButton::clicked, this, &httppost::load);
     connect(ui.pushButtonSave, &QPushButton::clicked, this, &httppost::save);
     connect(ui.pushButtonSend, &QPushButton::clicked, this, &httppost::send);
 
@@ -84,10 +86,12 @@ httppost::httppost(QWidget *parent)
 
 	set_table_widgets();
 
-	//
-    ui.tabWidgetPostBody->tabBar()->hide();
-    ui.checkBoxAutoUCenterAuthentication->hide();
+    add_save_button_menu();
 
+	//
+    //ui.tabScript->hide();
+    ui.tabWidgetPostBody->tabBar()->hide();
+    ui.tabWidgetPostBody->setCurrentWidget(ui.tabBody);
     ui.tabWidgetCustom->tabBar()->hide();
 
 	progress_bar = new QProgressBar;
@@ -100,10 +104,18 @@ httppost::httppost(QWidget *parent)
 
     load_form_status();
 
-    QString default_file_name = DEFAULT_FILE_NAME;
-    QJsonObject v = load_json_file(default_file_name);
+    QString default_file_name;
+    QStringList args = qApp->arguments();
+    if(args.length() > 1 && QFile(args[1]).exists()){
+        default_file_name = args[1];
+    }else{
+        default_file_name = DEFAULT_FILE_NAME;
+    }
+
+    QJsonObject v = load_json_file(default_file_name, false);
     set_ui_data(v);
 
+    ui.labelStatus->clear();
 
 }
 
@@ -113,6 +125,22 @@ httppost::~httppost()
     save_json_file(DEFAULT_FILE_NAME, v);
 
     save_form_status();
+}
+
+void httppost::add_save_button_menu()
+{
+    _file_menu = new QMenu(this);
+    QAction *load_action = new QAction(_file_menu);
+    load_action->setText(QObject::tr("Load ..."));
+    _file_menu->addAction(load_action);
+    connect(load_action, &QAction::triggered, this, &httppost::load);
+
+    QAction *save_as_action = new QAction(_file_menu);
+    save_as_action->setText(QObject::tr("Save as ..."));
+    _file_menu->addAction(save_as_action);
+    connect(save_as_action, &QAction::triggered, this, &httppost::save_as);
+
+    ui.pushButtonSaveMenu->setMenu(_file_menu);//设置菜单
 }
 
 QString httppost::get_combobox_items(QComboBox *comboBox)
@@ -132,9 +160,12 @@ void httppost::save_form_status()
 {
     QJsonObject v;
 
+    v["verbs"] = get_combobox_items(ui.comboBoxVerb);
+    v["current_verb"] = ui.comboBoxVerb->currentText();
     v["tab_widget_index"] = ui.tabWidget->currentIndex();
     v["custom_type"] = ui.radioButtonCustomFiles->isChecked() ? 1 : 2;
     v["custom_content_type"] =  get_combobox_items(ui.comboBoxCustomContentTypes);
+    v["current_custom_content_type"] = ui.comboBoxCustomContentTypes->currentText();
     v["custom_files"] = get_combobox_items(ui.comboBoxCustomFiles);
 
     save_json_file(FORM_STATUS_FILE_NAME, v);
@@ -145,18 +176,28 @@ void httppost::update_custom_type_ui(int custom_type)
     if(custom_type == 1){
         ui.radioButtonCustomFiles->setChecked(true);
         ui.tabWidgetCustom->setCurrentWidget(ui.tabCustomFiles);
+        ui.comboBoxCustomContentTypes->setEnabled(true);
     } else if(custom_type == 2) {
         ui.radioButtonCustomTexts->setChecked(true);
         ui.tabWidgetCustom->setCurrentWidget(ui.tabCustomTexts);
+        ui.comboBoxCustomContentTypes->setEnabled(false);
     }
 }
 
 void httppost::load_form_status()
 {
-    QJsonObject v = load_json_file(FORM_STATUS_FILE_NAME);
+    QJsonObject v = load_json_file(FORM_STATUS_FILE_NAME, false);
     if(v.isEmpty()){
         return;
     }
+
+    QStringList verbs = v["verbs"].toString().split(',');
+    if(!verbs.isEmpty()){
+        ui.comboBoxVerb->clear();
+        ui.comboBoxVerb->addItems(verbs);
+    }
+    ui.comboBoxVerb->setCurrentText(v["current_verb"].toString());
+
 
     ui.tabWidget->setCurrentIndex(v["tab_widget_index"].toInt());
 
@@ -164,14 +205,18 @@ void httppost::load_form_status()
     update_custom_type_ui(custom_type);
 
     QStringList custom_content_types = v["custom_content_type"].toString().split(',');
-    ui.comboBoxCustomContentTypes->clear();
-    ui.comboBoxCustomContentTypes->addItems(custom_content_types);
+    if(!custom_content_types.isEmpty()){
+        ui.comboBoxCustomContentTypes->clear();
+        ui.comboBoxCustomContentTypes->addItems(custom_content_types);
+    }
+
+    ui.comboBoxCustomContentTypes->setCurrentText(v["current_custom_content_type"] .toString());
 
     QStringList custom_files = v["custom_files"].toString().split(",");
-    ui.comboBoxCustomFiles->clear();
-    ui.comboBoxCustomFiles->addItems(custom_files);
-
-
+    if(!custom_files.isEmpty()){
+        ui.comboBoxCustomFiles->clear();
+        ui.comboBoxCustomFiles->addItems(custom_files);
+    }
 }
 
 void httppost::set_table_widgets()
@@ -269,7 +314,6 @@ void httppost::content_type_button_clicked(bool checked)
     }
 
     ui.comboBoxCustomContentTypes->setEnabled(ui.radioButtonCustom->isChecked());
-
 }
 
 void httppost::custom_type_button_clicked(bool checked)
@@ -385,8 +429,13 @@ void httppost::send()
     http_data_list header_items = ui.tableWidgetHeaders->data();
     update_request_custom_header(header_items, request->request());
 
+    QScopedPointer<QTime> time(new QTime());
+    time->start();
     QNetworkReply *reply = 0;
     QString verb = ui.comboBoxVerb->currentText();
+    if(ui.comboBoxVerb->findText(verb) == -1){
+        ui.comboBoxVerb->addItem(verb);
+    }
     QString verb_upper = verb.toUpper();
     if(verb_upper == "GET"){
         reply = client->get(request.data());
@@ -395,8 +444,8 @@ void httppost::send()
             return;
         }
         reply = client->post(request.data());
-    }else if(verb == "HEADER"){
-        reply = client->customRequest(request.data(), verb);
+    }else if(verb == "HEAD"){
+        reply = client->head(request.data());
     }else{
         if(!update_request_body(request.data())){
             return;
@@ -405,8 +454,10 @@ void httppost::send()
     }
 
     if(reply){
-        show_reply(reply);
+        show_reply(reply, time.data());
     }
+
+    finished();
 }
 
 void httppost::set_ui_data(QJsonObject &v)
@@ -436,6 +487,7 @@ void httppost::set_ui_data(QJsonObject &v)
                                            , ui.radioButtonJson, ui.radioButtonCustom};
     if(body_page_index >= 0 && body_page_index < 4){
         content_radio_buttons[body_page_index]->setChecked(true);
+        ui.comboBoxCustomContentTypes->setEnabled(ui.radioButtonCustom->isChecked());
     }
 
 }
@@ -479,6 +531,16 @@ void httppost::load()
 
 void httppost::save()
 {
+    if(last_file_name.isEmpty()){
+        save_as();
+    }else{
+        QJsonObject v = get_ui_data();
+        save_json_file(last_file_name, v);
+    }
+}
+
+void httppost::save_as()
+{
     QString file_name = get_save_file_name("Http Post Data(*.hpd)");
     if(file_name.isEmpty()){
         return;
@@ -488,12 +550,7 @@ void httppost::save()
     save_json_file(file_name, v);
 }
 
-void httppost::save_as()
-{
-
-}
-
-void httppost::show_reply(QNetworkReply * reply)
+void httppost::show_reply(QNetworkReply * reply, QTime *time)
 {
 	if (reply->error() == QNetworkReply::NoError)
 	{
@@ -523,6 +580,19 @@ void httppost::show_reply(QNetworkReply * reply)
 		ui.tableWidgetResponseHeaders->setItem(i, 1,
 			new QTableWidgetItem(QString(headers[i].second)));
 	}
+
+    //设置status
+    int time_spend = -1;
+    if(time){
+        time_spend = time->elapsed();
+    }
+
+    int http_status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QString http_reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+
+    QString status_str = QString(STATUS_FORMAT_STR).arg(http_status).arg(http_reason).arg(time_spend);
+    ui.labelStatus->setText(status_str);
+
 
 	reply->close();
     reply->deleteLater();
@@ -694,21 +764,14 @@ void httppost::insert_form_data(const QString& type, const QString& file_name)
 QString httppost::get_open_file_name(const QString& filter)
 {
 	QString file_name = QFileDialog::getOpenFileName(0, QString(), last_file_name, filter);
-	if (!file_name.isEmpty()){
-		last_file_name = file_name;
-	}
-
 	return file_name;
 }
 
 
 QString httppost::get_save_file_name(const QString& filter)
 {
-	QString file_name = QFileDialog::getSaveFileName(0, QString(), last_file_name, filter);
-	if (!file_name.isEmpty()){
-		last_file_name = file_name;
-	}
-	return file_name;
+    QString file_name = QFileDialog::getSaveFileName(0, QString(), last_file_name, filter);
+    return file_name;
 }
 
 QByteArray httppost::load_text_file(const QString& filter)
@@ -743,31 +806,42 @@ void httppost::save_text_file(const QString& filter, const QByteArray& data)
 	file.write(data);
 }
 
-QJsonObject httppost::load_json_file(const QString& file_name)
+QJsonObject httppost::load_json_file(const QString& file_name, bool show_error)
 {
 	QFile file(file_name);
-	if (!file.open(QIODevice::ReadOnly)){
-		QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
+    if (!file.open(QIODevice::ReadOnly)){
+        if(show_error){
+            QMessageBox::warning(this, "文件打开错误", file.errorString(), QMessageBox::Ok);
+        }
 		return QJsonObject();
 	}
 
 	QJsonParseError error;
 	QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
 	if (doc.isNull()){
-		QMessageBox::warning(this, "Json 错误", error.errorString(), QMessageBox::Ok);
+        if(show_error){
+            QMessageBox::warning(this, "Json 错误", error.errorString(), QMessageBox::Ok);
+        }
 		return QJsonObject();
 	}
 
 	if (!doc.isObject()){
-		QMessageBox::warning(this, "Json 错误", "json数据不是本软件需要的。", QMessageBox::Ok);
+        if(show_error){
+            QMessageBox::warning(this, "Json 错误", "json数据不是本软件需要的。", QMessageBox::Ok);
+        }
 		return QJsonObject();
 	}
 
 	QJsonObject obj = doc.object();
 	if (!obj.contains("json_file_version") || obj["json_file_version"] != JSON_FILE_VERSION){
-		QMessageBox::warning(this, "Json 错误", "json数据版本不符。", QMessageBox::Ok);
+        if(show_error){
+            QMessageBox::warning(this, "Json 错误", "json数据版本不符。", QMessageBox::Ok);
+        }
 		return QJsonObject();
 	}
+
+    last_file_name = file_name;
+    setWindowTitle("Http 测试 - " + last_file_name);
 
 	return doc.object();
 }
@@ -784,6 +858,10 @@ void httppost::save_json_file(const QString& file_name, const QJsonObject& v)
 	ov["json_file_version"] = JSON_FILE_VERSION;
 
 	QJsonDocument doc(v);
-	file.write(doc.toJson());
+    file.write(doc.toJson());
+    file.close();
+
+    last_file_name = file_name;
+    setWindowTitle("Http 测试 - " + last_file_name);
 }
 

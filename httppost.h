@@ -21,6 +21,8 @@ class http_script_engine;
 class QUrl;
 class http_request;
 class QJsonObject;
+class QMenu;
+class QTime;
 
 typedef QMap<QString, QString> key_value_map;
 
@@ -30,8 +32,9 @@ class httppost : public QMainWindow
 
 public:
 	httppost(QWidget *parent = 0);
-	~httppost();
-	void show_reply(QNetworkReply * reply);
+    ~httppost();
+    void add_save_button_menu();
+    void show_reply(QNetworkReply * reply, QTime *time);
 	QString get_url_encode_body();
 
     void set_ui_data(QJsonObject& v);
@@ -91,7 +94,7 @@ public:
 	QString get_save_file_name(const QString& filter);
 	QByteArray load_text_file(const QString& filter);
 	void save_text_file(const QString& filter, const QByteArray& data);
-	QJsonObject load_json_file(const QString& file_name);
+    QJsonObject load_json_file(const QString& file_name, bool show_error = true);
 	void save_json_file(const QString& file_name, const QJsonObject& v);
 
     void update_custom_type_ui(int custom_type);
@@ -103,6 +106,7 @@ private:
 	QProgressBar *progress_bar;
 	QString last_file_name;
 	http_script_engine *_engine;
+    QMenu *_file_menu;
 };
 
 #endif // HTTPPOST_H

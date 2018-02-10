@@ -81,6 +81,7 @@ public:
 	~http_client();
 	QNetworkReply *post(http_request *request, bool redirect = true);
 	QNetworkReply *get(http_request *request, bool redirect = true);
+    QNetworkReply *head(http_request *request, bool redirect = true);
     QNetworkReply *customRequest(http_request *request, QString& verb, bool redirect = true);
 	QByteArray get_reply_data(QNetworkReply *reply);
     bool process_and_check_redirect(bool redirect, QNetworkReply *reply, QNetworkRequest& req);

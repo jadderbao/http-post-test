@@ -119,7 +119,7 @@ bool http_client::process_and_check_redirect(bool redirect, QNetworkReply *reply
     connect(reply, &QNetworkReply::downloadProgress, this, &http_client::downloadProgress);
     connect(reply, &QNetworkReply::uploadProgress, this, &http_client::uploadProgress);
     connect(reply, &QNetworkReply::finished, this, &http_client::finished);
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);    
     loop.exec();
 
     if (redirect &&
@@ -190,6 +190,24 @@ QNetworkReply *http_client::get(http_request *request, bool redirect /*= true*/)
 
 		break;
 	}
+
+    return reply;
+}
+
+QNetworkReply *http_client::head(http_request *request, bool redirect)
+{
+    QNetworkReply *reply = 0;
+    while (true){
+
+        QNetworkRequest& req = *request->request();
+
+        reply = _am->head(req);
+        if(reply && process_and_check_redirect(redirect, reply, req)){
+            continue;
+        }
+
+        break;
+    }
 
     return reply;
 }

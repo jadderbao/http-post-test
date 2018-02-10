@@ -33,6 +33,7 @@ void form_data_table_widget::insert()
     }
 
     setItem(row, FORM_DATA_COLUMN_USED, new QTableWidgetItem("true"));
+    setItem(row, FORM_DATA_COLUMN_CONTENT_TYPE, new QTableWidgetItem("text/plain"));
 }
 
 void form_data_table_widget::setItemDelegate(QAbstractItemDelegate *delegate)
@@ -63,7 +64,8 @@ void form_data_table_widget::item_editor(const QModelIndex &index)
     QTableWidgetItem *content_type_item = item(row, FORM_DATA_COLUMN_CONTENT_TYPE);
     QTableWidgetItem *value_item = item(row, FORM_DATA_COLUMN_VALUE);
     if(( name_item && !name_item->data(0).toString().isEmpty())
-        || ( content_type_item && !content_type_item->data(0).toString().isEmpty())
+        || ( content_type_item && !content_type_item->data(0).toString().isEmpty()
+             && content_type_item->data(0).toString() != "text/plain")
         || ( value_item && !value_item->data(0).toString().isEmpty()) ){
 
         row = rowCount();
