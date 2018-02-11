@@ -338,6 +338,9 @@
              <property name="text">
               <string>multipart/form-data</string>
              </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>

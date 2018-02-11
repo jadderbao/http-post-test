@@ -139,6 +139,7 @@ QWidget * table_widget_delegate::createWidget(const QModelIndex &index, const QS
 	case  WIDGET_COMBOBOX:
 		{
 			QComboBox *widget = new QComboBox(parent);
+            widget->setEditable(true);
 			switch (cd->data.type())
 			{
 			case QVariant::StringList:

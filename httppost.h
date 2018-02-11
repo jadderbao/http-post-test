@@ -49,7 +49,7 @@ public:
 	void insert_form_data(const QString& type, const QString& file_name);
 
 protected:
-	void set_table_widgets();
+    void set_table_widgets(const QJsonObject& form_status_data);
 
 protected:
 	bool get_ui_data_items(http_data_list& items);
@@ -61,10 +61,10 @@ public:
     QUrl get_url();
     bool update_request_body(http_request* request);
     QString get_combobox_items(QComboBox *comboBox);
-
+    QStringList get_http_content_type(const QJsonObject& form_status_data);
 public:
     void save_form_status();
-    void load_form_status();
+    void load_form_status(const QJsonObject& form_status_data);
 
 public:
 	void initialize_script_engine(http_script_engine *engine);
