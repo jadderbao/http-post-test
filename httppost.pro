@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core network script widgets gui
+QT += core network script widgets gui webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

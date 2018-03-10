@@ -16,6 +16,7 @@ class QNetworkCookieJar;
 class QProgressBar;
 class QHttpMultiPart;
 class QTableWidget;
+class QWebEngineView;
 
 class http_script_engine;
 class QUrl;
@@ -107,6 +108,7 @@ private:
 	QString last_file_name;
 	http_script_engine *_engine;
     QMenu *_file_menu;
+    QWebEngineView * _webView;
 };
 
 #endif // HTTPPOST_H

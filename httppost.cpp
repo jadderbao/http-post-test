@@ -6,6 +6,7 @@
 #include <QNetworkCookieJar>
 #include <QProgressBar>
 #include <QHttpMultiPart>
+#include <QWebEngineView>
 
 #include <QEventLoop>
 #include <QJsonDocument>
@@ -90,6 +91,12 @@ httppost::httppost(QWidget *parent)
     ui.tabWidgetPostBody->setCurrentWidget(ui.tabBody); 
     ui.tabWidgetPostBody->setCurrentIndex(0);
     ui.tabWidgetCustom->tabBar()->hide();
+
+    //
+    _webView = new QWebEngineView(this);
+    QHBoxLayout *webview_layout = new QHBoxLayout;
+    webview_layout->addWidget(_webView);
+    ui.tabResponseWebView->setLayout(webview_layout);
 
     progress_bar = new QProgressBar;
     progress_bar->setVisible(false);
@@ -445,6 +452,12 @@ bool httppost::update_request_body(http_request *request)
 
     request->set_body(body);
     if(!content_type.isEmpty()){
+        if(!content_type.contains("charset", Qt::CaseInsensitive)){
+            QTextCodec *codec = QTextCodec::codecForLocale();
+            if(codec){
+                content_type.append(";charset=UTF-8");
+            }
+        }
         request->request()->setHeader(QNetworkRequest::ContentTypeHeader, content_type);
     }
 
@@ -596,24 +609,24 @@ void httppost::save_as()
 
 void httppost::show_reply(QNetworkReply * reply, QTime *time)
 {
-	if (reply->error() == QNetworkReply::NoError)
-	{
-		//没有错误，输出返回值
-		QString response_body = reply->readAll();  // bytes 
-		QJsonParseError error;
-		QJsonDocument doc = QJsonDocument::fromJson(response_body.toUtf8(), &error);
-		if (error.error != QJsonParseError::NoError){
-			ui.plainTextEditResponseBody->setPlainText(response_body);
-		}
-		else{
-			ui.plainTextEditResponseBody->setPlainText(doc.toJson());
-		}
-	}
-	else
-	{
-		//如果有错误，显示出错信息
-		ui.plainTextEditResponseBody->setPlainText(reply->errorString());
-	}
+
+    //没有错误，输出返回值
+    QString response_body = reply->readAll();  // bytes
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(response_body.toUtf8(), &error);
+    if (error.error != QJsonParseError::NoError){
+        ui.plainTextEditResponseBody->setPlainText(response_body);
+    }
+    else{
+        ui.plainTextEditResponseBody->setPlainText(doc.toJson());
+    }
+
+    if(!response_body.isEmpty()){
+        _webView->setHtml(response_body);
+    }else{
+        ui.plainTextEditResponseBody->setPlainText(reply->errorString());
+        _webView->setHtml(reply->errorString());
+    }
 
 	//输出头
 	const QList<QNetworkReply::RawHeaderPair>& headers = reply->rawHeaderPairs();

@@ -875,6 +875,11 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="tabResponseWebView">
+           <attribute name="title">
+            <string>WebView</string>
+           </attribute>
+          </widget>
           <widget class="QWidget" name="tabResponseHeader">
            <attribute name="title">
             <string>Headers</string>
